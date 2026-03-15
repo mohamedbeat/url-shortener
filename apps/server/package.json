@@ -27,6 +27,8 @@
     "@nestjs/typeorm": "^11.0.0",
     "@packages/shared": "workspace:*",
     "device-detector-js": "^3.0.3",
+    "geoip-lite": "^2.0.0",
+    "i18n-iso-countries": "^7.14.0",
     "joi": "^18.0.2",
     "nanoid": "^5.1.6",
     "reflect-metadata": "^0.2.2",

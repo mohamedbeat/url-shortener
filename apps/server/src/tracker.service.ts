@@ -5,6 +5,8 @@ import { Repository } from "typeorm";
 import { type Request } from "express"
 import DeviceDetector from 'device-detector-js';
 import { Visit } from "./links/entities/visits.entity";
+import * as geoip from 'geoip-lite';
+import * as countries from 'i18n-iso-countries';
 
 export type DeviceInfo = {
   browser?: string;
@@ -13,6 +15,7 @@ export type DeviceInfo = {
   isMobile?: boolean;
   bot?: boolean;
   referer?: string
+  country?: string
 }
 
 @Injectable()
@@ -47,8 +50,8 @@ export class TrackerService {
 
   async getDeviceInfo(req: Request): Promise<DeviceInfo | undefined> {
     const userAgent = req.headers['user-agent'];
-    console.log("user agent", userAgent)
     const referer = req.headers.referer;
+    const ipAddress = req.ip || req.socket.remoteAddress;
 
     const info: Partial<DeviceInfo> = {};
 
@@ -68,6 +71,13 @@ export class TrackerService {
       info.referer = referer;
     }
 
+    if (ipAddress) {
+
+      const geo = geoip.lookup(ipAddress)
+      if (geo) {
+        info.country = countries.getName(geo.country, "en")
+      }
+    }
     // Check if any property has a truthy value
     const hasAnyData = Object.values(info).some(value => value !== undefined);
 
