@@ -1,0 +1,12 @@
+opencollection: 1.0.0
+info:
+  name: "bruno-workspace-url-shortner"
+  type: workspace
+
+collections:
+  - name: "links"
+    path: "collections/links"
+
+specs:
+
+docs: ''

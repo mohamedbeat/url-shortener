@@ -1,0 +1,21 @@
+{
+  "name": "url-shortner",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev:server": "bun run --cwd apps/server dev",
+    "build:server": "bun run --cwd apps/server build",
+    "start:server": "bun run --cwd apps/server start"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
