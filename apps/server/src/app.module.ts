@@ -11,6 +11,7 @@ import {
 import { EnvModule } from './config/env/env.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Link } from './links/entities/link.entity';
+import { TrackerService } from './tracker.service';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -28,7 +29,7 @@ import { Link } from './links/entities/link.entity';
   TypeOrmModule.forFeature([Link])
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, TrackerService],
 })
 export class AppModule {
 }

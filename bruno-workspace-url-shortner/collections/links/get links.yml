@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{api_url}}/api/links?page=1&limit=10&shortHash&title&url&customSlug=Po"
+  url: "{{api_url}}/api/links?page=1&limit=10&shortHash&title&url&customSlug"
   params:
     - name: page
       value: "1"
@@ -23,7 +23,7 @@ http:
       value: ""
       type: query
     - name: customSlug
-      value: Po
+      value: ""
       type: query
   auth: inherit
 

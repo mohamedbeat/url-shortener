@@ -30,6 +30,11 @@ export class Link {
   })
   customSlug: string
 
+  @Column({
+    default: 0
+  })
+  totalClicks: number
+
   @Column({ default: true })
   isActive: boolean;
 
