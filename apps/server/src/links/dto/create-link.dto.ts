@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   MinLength,
   MaxLength,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateLinkDto {
@@ -18,4 +19,9 @@ export class CreateLinkDto {
   @MaxLength(2048, { message: 'URL is too long' })
   url: string;
 
+  @IsOptional()
+  @IsString()
+  @MinLength(3, { message: 'custom slug must be at least 3 characters long' })
+  @MaxLength(255, { message: 'custom slug cannot exceed 255 characters' })
+  customSlug: string
 }

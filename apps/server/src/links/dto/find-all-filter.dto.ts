@@ -13,4 +13,9 @@ export class FindAllLinksFiltersDto {
   @IsOptional()
   @IsString()
   shortHash?: string;
+
+  @IsOptional()
+  @IsString()
+  customSlug?: string;
+
 }

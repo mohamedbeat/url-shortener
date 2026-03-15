@@ -1,8 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Link } from './links/entities/link.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+
+  constructor(
+    @InjectRepository(Link)
+    private linkRepo: Repository<Link>
+  ) { }
+
+  async getLink(input: string) {
+
+    let link = await this.linkRepo.findOneBy({
+      customSlug: input
+    })
+
+    if (!!link) {
+      return link
+    }
+
+    link = await this.linkRepo.findOneBy({
+      shortHash: input
+    })
+    return link
   }
 }

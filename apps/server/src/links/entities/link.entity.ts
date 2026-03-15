@@ -24,6 +24,12 @@ export class Link {
   })
   shortHash: string;
 
+  @Column({
+    unique: true,
+    nullable: true
+  })
+  customSlug: string
+
   @Column({ default: true })
   isActive: boolean;
 

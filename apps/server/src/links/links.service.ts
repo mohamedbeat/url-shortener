@@ -20,6 +20,19 @@ export class LinksService {
     if (!!urlExist) {
       throw new ConflictException("the given URL already exists")
     }
+    if (!!createLinkDto.customSlug) {
+      const slugExist = await this.linkRepo.findOne({
+        where: [
+          { customSlug: createLinkDto.customSlug },
+          { shortHash: createLinkDto.customSlug },
+        ]
+      })
+
+      if (!!slugExist) {
+        throw new ConflictException("the given custom slug already exists")
+      }
+
+    }
 
     const hash = await this.generateUniqueHash()
 
@@ -47,9 +60,15 @@ export class LinksService {
     })
   }
 
-  async getByUrl(url: string) {
+  async getByURL(url: string) {
     return await this.linkRepo.findOneBy({
       url: url
+    })
+  }
+
+  async getBySlug(slug: string) {
+    return await this.linkRepo.findOneBy({
+      customSlug: slug
     })
   }
 
@@ -60,6 +79,7 @@ export class LinksService {
       title?: string;
       url?: string;
       shortHash?: string;
+      customSlug?: string
     },
   ): Promise<Pagination<Link>> {
     const queryBuilder = this.linkRepo.createQueryBuilder('link');
@@ -71,6 +91,10 @@ export class LinksService {
 
     if (filters?.url) {
       queryBuilder.andWhere('link.url GLOB :url', { url: `*${filters.url}*` });
+    }
+
+    if (filters?.customSlug) {
+      queryBuilder.andWhere('link.customSlug LIKE :customSlug', { customSlug: `%${filters.customSlug}%` });
     }
 
     if (filters?.shortHash) {
@@ -131,9 +155,21 @@ export class LinksService {
     const exists = await this.findById(id)
 
     if (!!updateLinkDto.url) {
-      const exitstsByURL = await this.getByUrl(updateLinkDto.url)
+      const exitstsByURL = await this.getByURL(updateLinkDto.url)
       if (!!exitstsByURL) {
         throw new ConflictException(`the given URL already exist.`)
+      }
+    }
+
+    if (!!updateLinkDto.customSlug) {
+      const slugExist = await this.linkRepo.findOne({
+        where: [
+          { customSlug: updateLinkDto.customSlug },
+          { shortHash: updateLinkDto.customSlug },
+        ]
+      })
+      if (!!slugExist) {
+        throw new ConflictException(`the given custom slug already exist.`)
       }
     }
 

@@ -9,6 +9,8 @@ import {
   envValidatinSchema
 } from './config/env/env.config';
 import { EnvModule } from './config/env/env.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Link } from './links/entities/link.entity';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -22,7 +24,9 @@ import { EnvModule } from './config/env/env.module';
   }),
     EnvModule,
     LinksModule,
-    typeOrmConfig],
+    typeOrmConfig,
+  TypeOrmModule.forFeature([Link])
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

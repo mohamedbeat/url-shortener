@@ -10,8 +10,8 @@ http:
     type: json
     data: |-
       {
-        "title":"unnecessairy",
-        "url":"https://mohammeddotgo.netlify.app/none"
+        "title":"example",
+        "url":"https://example.com"
       }
   auth: inherit
 

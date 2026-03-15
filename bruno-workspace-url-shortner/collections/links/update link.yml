@@ -5,12 +5,12 @@ info:
 
 http:
   method: PATCH
-  url: "{{api_url}}/api/links/09cbcedc-220b-41c7-9a08-dbc1a526de8c"
+  url: "{{api_url}}/api/links/1ef3f13c-0fc9-4576-af85-d8b57250e411"
   body:
     type: json
     data: |-
       {
-        "title":"randomS"
+        "customSlug":"Portfolio"
       }
   auth: inherit
 
