@@ -1,0 +1,21 @@
+info:
+  name: update link
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{api_url}}/api/links/09cbcedc-220b-41c7-9a08-dbc1a526de8c"
+  body:
+    type: json
+    data: |-
+      {
+        "title":"randomS"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

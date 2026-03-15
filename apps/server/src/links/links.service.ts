@@ -1,26 +1,180 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Link } from './entities/link.entity';
+import { Repository } from 'typeorm';
+import { nanoid } from 'nanoid';
+import { type Pagination } from "@packages/shared/types"
 
 @Injectable()
 export class LinksService {
-  create(createLinkDto: CreateLinkDto) {
-    return 'This action adds a new link';
+
+  constructor(
+    @InjectRepository(Link)
+    private linkRepo: Repository<Link>
+  ) { }
+
+  async create(createLinkDto: CreateLinkDto) {
+    const urlExist = await this.exists(createLinkDto.url)
+    if (!!urlExist) {
+      throw new ConflictException("the given URL already exists")
+    }
+
+    const hash = await this.generateUniqueHash()
+
+    const created = this.linkRepo.create({
+      ...createLinkDto,
+      shortHash: hash
+    })
+    return await this.linkRepo.save(created);
   }
 
-  findAll() {
-    return `This action returns all links`;
+  async exists(url: string) {
+    const found = await this.linkRepo.findOne({
+      where: [
+        { url: url },
+      ]
+    })
+
+    return !!found
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} link`;
+
+  async getByShortHash(hash: string) {
+    return await this.linkRepo.findOneBy({
+      shortHash: hash
+    })
   }
 
-  update(id: number, updateLinkDto: UpdateLinkDto) {
-    return `This action updates a #${id} link`;
+  async getByUrl(url: string) {
+    return await this.linkRepo.findOneBy({
+      url: url
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} link`;
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+    filters?: {
+      title?: string;
+      url?: string;
+      shortHash?: string;
+    },
+  ): Promise<Pagination<Link>> {
+    const queryBuilder = this.linkRepo.createQueryBuilder('link');
+
+    // Apply filters if provided
+    if (filters?.title) {
+      queryBuilder.andWhere('link.title LIKE :title', { title: `%${filters.title}%` });
+    }
+
+    if (filters?.url) {
+      queryBuilder.andWhere('link.url GLOB :url', { url: `*${filters.url}*` });
+    }
+
+    if (filters?.shortHash) {
+      queryBuilder.andWhere('link.shortHash GLOB :shortHash', {
+        shortHash: `*${filters.shortHash}*`
+      });
+    }
+
+    // Get total count before pagination
+    const total = await queryBuilder.getCount();
+
+    // Apply pagination and ordering
+    const data = await queryBuilder
+      .orderBy('link.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
+
+    const totalPages = Math.ceil(total / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    return {
+      data,
+      pagination: {
+        currentPage: page,
+        limit,
+        total,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage,
+      },
+    };
+  }
+
+  async findById(id: string) {
+    const found = await this.linkRepo.findOneBy({
+      id: id
+    })
+    if (!found) {
+      throw new NotFoundException(`Link with id ${id} not found`)
+    }
+    return found
+  }
+
+  async findByHash(hash: string) {
+    const found = await this.linkRepo.findOneBy({
+      shortHash: hash
+    })
+    if (!found) {
+      throw new NotFoundException(`Link with hash ${hash} not found`)
+    }
+    return found
+  }
+
+  async update(id: string, updateLinkDto: UpdateLinkDto) {
+
+    const exists = await this.findById(id)
+
+    if (!!updateLinkDto.url) {
+      const exitstsByURL = await this.getByUrl(updateLinkDto.url)
+      if (!!exitstsByURL) {
+        throw new ConflictException(`the given URL already exist.`)
+      }
+    }
+
+    await this.linkRepo.update({
+      id
+    }, {
+      ...updateLinkDto
+    })
+    return this.linkRepo.findOneBy({
+      id
+    })
+  }
+
+  async remove(id: string) {
+
+    await this.findById(id)
+
+    await this.linkRepo.delete({
+      id
+    })
+
+    return {
+      message: "deleted successfully"
+    }
+  }
+
+  async generateUniqueHash(length: number = 8): Promise<string> {
+    const maxAttempts = 5;
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      const hash = nanoid(length);
+      const existing = await this.linkRepo.findOneBy({ shortHash: hash });
+
+      if (!existing) {
+        return hash;
+      }
+
+      attempts++;
+    }
+    // If we couldn't find a unique hash after max attempts, increase length
+    return this.generateUniqueHash(length + 1);
   }
 }

@@ -14,13 +14,17 @@ export class Link {
   @Column()
   title: string;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   url: string;
 
-  @Column()
+  @Column({
+    unique: true
+  })
   shortHash: string;
 
-  @Column()
+  @Column({ default: true })
   isActive: boolean;
 
   @CreateDateColumn()
