@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Visit } from './visits.entity';
 
 @Entity()
 export class Link {
@@ -43,4 +45,7 @@ export class Link {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Visit, (visit) => visit.link)
+  visits: Visit[];
 }

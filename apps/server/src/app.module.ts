@@ -12,6 +12,7 @@ import { EnvModule } from './config/env/env.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Link } from './links/entities/link.entity';
 import { TrackerService } from './tracker.service';
+import { Visit } from './links/entities/visits.entity';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -26,7 +27,7 @@ import { TrackerService } from './tracker.service';
     EnvModule,
     LinksModule,
     typeOrmConfig,
-  TypeOrmModule.forFeature([Link])
+  TypeOrmModule.forFeature([Link, Visit])
   ],
   controllers: [AppController],
   providers: [AppService, TrackerService],
