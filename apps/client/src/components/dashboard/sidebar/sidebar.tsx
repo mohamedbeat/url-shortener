@@ -187,11 +187,13 @@ export function AppSidebar({
         {/* Tools Navigation with Collapsible */}
         <Collapsible defaultOpen className="group/collapsible">
           <SidebarGroup>
-            <CollapsibleTrigger className={"cursor-pointer flex flex-row"}>
+            <CollapsibleTrigger className={"cursor-pointer flex flex-row items-center justify-between"}>
               <SidebarGroupLabel >
                 Tools
               </SidebarGroupLabel>
-              <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              <div>
+                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+              </div>
             </CollapsibleTrigger>
             <CollapsibleContent>
               <SidebarGroupContent>
