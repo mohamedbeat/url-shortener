@@ -32,10 +32,11 @@ import {
   Zap
 } from 'lucide-react';
 import { SideBarFooter } from './SideBareFooter';
+import { SideBarThemeToggler } from './SideBarThemeToggler';
 
 const mainNavigation = [
   {
-    title: 'Dashboard',
+    title: 'Overview',
     url: '/dashboard',
     icon: LayoutDashboard,
     description: 'Overview of your links'
@@ -186,11 +187,9 @@ export function AppSidebar({
         {/* Tools Navigation with Collapsible */}
         <Collapsible defaultOpen className="group/collapsible">
           <SidebarGroup>
-            <CollapsibleTrigger>
-
+            <CollapsibleTrigger className={"cursor-pointer flex flex-row"}>
               <SidebarGroupLabel >
                 Tools
-
               </SidebarGroupLabel>
               <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
             </CollapsibleTrigger>
@@ -243,30 +242,19 @@ export function AppSidebar({
                   </Link>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator />
-
-        {/* Help & Support */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
               <SidebarMenuItem>
-                <Link to="/dashboard">
-                  <SidebarMenuButton tooltip="Documentation and support">
-                    <HelpCircle />
-                    <span>Help & Support</span>
-                  </SidebarMenuButton>
-                </Link>
+                <SideBarThemeToggler />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+
       </SidebarContent>
 
       {/* Footer with User Profile */}
+
+      <SidebarSeparator />
       <SideBarFooter />
       <SidebarRail />
     </Sidebar>

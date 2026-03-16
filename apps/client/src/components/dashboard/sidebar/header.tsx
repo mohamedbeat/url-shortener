@@ -7,36 +7,29 @@ import { Input } from '@/components/ui/input'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { SidebarTrigger } from '@/components/ui/sidebar'
 
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
-      {/* Mobile sidebar trigger */}
-      <Sheet>
-        <SheetTrigger
-        //asChild
-        >
-          <Button variant="ghost" size="icon" className="lg:hidden">
-            <Menu className="h-5 w-5" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="p-0">
-        </SheetContent>
-      </Sheet>
 
-      {/* Logo for mobile */}
-      <Link to="/" className="lg:hidden">
-        <div className="h-6 w-6 rounded bg-primary" />
-      </Link>
+      {/* Mobile sidebar trigger */}
+      <Button variant="ghost" size="icon" className="lg:hidden">
+        <SidebarTrigger
+        >
+          <Menu className="h-5 w-5" />
+
+        </SidebarTrigger>
+      </Button>
 
       {/* Search */}
       <div className="flex flex-1 items-center gap-4 md:gap-6">
@@ -69,44 +62,48 @@ export function Header() {
           </Button>
 
           <DropdownMenu>
-            <DropdownMenuTrigger
-            //asChild 
-            >
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <DropdownMenuTrigger
+              >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/avatars/01.png" alt="User" />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
+              </DropdownMenuTrigger>
+            </Button>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Billing</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Log out</DropdownMenuItem>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Log out</DropdownMenuItem>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
       {/* Mobile search overlay */}
-      {isSearchOpen && (
-        <div className="absolute inset-x-0 top-14 border-b bg-background p-4 md:hidden">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-full pl-8"
-              autoFocus
-              onBlur={() => setIsSearchOpen(false)}
-            />
+      {
+        isSearchOpen && (
+          <div className="absolute inset-x-0 top-14 border-b bg-background p-4 md:hidden">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="w-full pl-8"
+                autoFocus
+                onBlur={() => setIsSearchOpen(false)}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </header>
+        )
+      }
+    </header >
   )
 }

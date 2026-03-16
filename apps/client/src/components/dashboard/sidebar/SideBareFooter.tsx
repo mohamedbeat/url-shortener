@@ -1,4 +1,6 @@
 import { SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { Link } from "@tanstack/react-router";
+import { HelpCircle } from "lucide-react";
 
 
 export function SideBarFooter() {
@@ -8,10 +10,12 @@ export function SideBarFooter() {
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton tooltip="Documentation and support">
-
-                footer
-              </SidebarMenuButton>
+              <Link to="/dashboard">
+                <SidebarMenuButton tooltip="Documentation and support">
+                  <HelpCircle />
+                  <span>Help & Support</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroupContent>
