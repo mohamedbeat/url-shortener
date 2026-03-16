@@ -59,9 +59,9 @@ export class TrackerService {
       const deviceInfo = this.deviceDetector.parse(userAgent);
 
       Object.assign(info, {
-        browser: deviceInfo.client?.name,
-        os: deviceInfo.os?.name,
-        deviceType: deviceInfo.device?.type,
+        browser: deviceInfo.client?.name || "unknown",
+        os: deviceInfo.os?.name || "unknown",
+        deviceType: deviceInfo.device?.type || "unknown",
         isMobile: deviceInfo.device?.type === 'smartphone',
         bot: !!deviceInfo.bot
       });
