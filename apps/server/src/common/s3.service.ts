@@ -20,9 +20,6 @@ export class S3Service {
   });
 
 
-  constructor() {
-  }
-
   async FetchFavicon(domain: string, size: number = 16) {
     try {
 
@@ -52,23 +49,30 @@ export class S3Service {
 
   async uploadIcon(filename: string, buffer: Buffer<ArrayBuffer>, size: number) {
 
-    // Prepare upload command
-    const uploadCommand = new PutObjectCommand({
-      Bucket: "url-shortener",
-      Key: `favicons/${filename}.png`,
-      Body: buffer,
-      ContentType: 'image/png',
-      CacheControl: 'max-age=31536000', // Cache for 1 year
-      Metadata: {
-        'size': size.toString(),
-        'uploaded-at': new Date().toISOString()
-      }
-    });
+    try {
+      // Prepare upload command
+      const uploadCommand = new PutObjectCommand({
+        Bucket: "url-shortener",
+        Key: `favicons/${filename}.png`,
+        Body: buffer,
+        ContentType: 'image/png',
+        CacheControl: 'max-age=31536000', // Cache for 1 year
+        Metadata: {
+          'size': size.toString(),
+          'uploaded-at': new Date().toISOString()
+        }
+      });
 
-    // Upload to S3
-    const result = await this.s3.send(uploadCommand);
-    const publicURL = `http://localhost:4566/url-shortener/favicons/${filename}.png`;
-    return publicURL
+      // Upload to S3
+      const result = await this.s3.send(uploadCommand);
+      const publicURL = `http://localhost:4566/url-shortener/favicons/${filename}.png`;
+      return publicURL
+
+    } catch (error) {
+      console.log("FAILED TO UPLOAD ICON")
+      console.log(error)
+      return undefined
+    }
 
   }
 

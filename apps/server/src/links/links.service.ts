@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -33,23 +33,17 @@ export class LinksService {
       if (!!slugExist) {
         throw new ConflictException("the given custom slug already exists")
       }
-
     }
-
-
 
     const domain = this.getDomainFromURL(createLinkDto.url)
 
-
     let publicURL: string | undefined = undefined
-
 
     // check if we have a domain
     if (domain?.length !== 0) {
 
       // get icon publicURL from s3
       publicURL = await this.s3Serice.getIconPublicURL(domain)
-
 
       // check if icon publicURL doesnt exists to upload the icon
       if (!publicURL) {
@@ -78,25 +72,6 @@ export class LinksService {
     })
 
     return !!found
-  }
-
-
-  async getByShortHash(hash: string) {
-    return await this.linkRepo.findOneBy({
-      shortHash: hash
-    })
-  }
-
-  async getByURL(url: string) {
-    return await this.linkRepo.findOneBy({
-      url: url
-    })
-  }
-
-  async getBySlug(slug: string) {
-    return await this.linkRepo.findOneBy({
-      customSlug: slug
-    })
   }
 
   async findAll(
