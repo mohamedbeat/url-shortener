@@ -1,3 +1,5 @@
+# local stack data
+localstack-data
 # dependencies (bun install)
 node_modules
 

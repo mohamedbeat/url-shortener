@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,13 +6,15 @@ import { Link } from './entities/link.entity';
 import { Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { type Pagination } from "@packages/shared/types"
+import { S3Service } from '../common/s3.service';
 
 @Injectable()
 export class LinksService {
 
   constructor(
     @InjectRepository(Link)
-    private linkRepo: Repository<Link>
+    private linkRepo: Repository<Link>,
+    private s3Serice: S3Service
   ) { }
 
   async create(createLinkDto: CreateLinkDto) {
@@ -34,11 +36,36 @@ export class LinksService {
 
     }
 
+
+
+    const domain = this.getDomainFromURL(createLinkDto.url)
+
+
+    let publicURL: string | undefined = undefined
+
+
+    // check if we have a domain
+    if (domain?.length !== 0) {
+
+      // get icon publicURL from s3
+      publicURL = await this.s3Serice.getIconPublicURL(domain)
+
+
+      // check if icon publicURL doesnt exists to upload the icon
+      if (!publicURL) {
+        const icon = await this.s3Serice.FetchFavicon(createLinkDto.url, 64)
+        if (icon?.buffer) {
+          publicURL = await this.s3Serice.uploadIcon(domain, icon.buffer, icon.size)
+        }
+      }
+    }
+
     const hash = await this.generateUniqueHash()
 
     const created = this.linkRepo.create({
       ...createLinkDto,
-      shortHash: hash
+      shortHash: hash,
+      publicURL
     })
     return await this.linkRepo.save(created);
   }
@@ -152,14 +179,7 @@ export class LinksService {
 
   async update(id: string, updateLinkDto: UpdateLinkDto) {
 
-    const exists = await this.findById(id)
-
-    if (!!updateLinkDto.url) {
-      const exitstsByURL = await this.getByURL(updateLinkDto.url)
-      if (!!exitstsByURL) {
-        throw new ConflictException(`the given URL already exist.`)
-      }
-    }
+    await this.findById(id)
 
     if (!!updateLinkDto.customSlug) {
       const slugExist = await this.linkRepo.findOne({
@@ -213,4 +233,18 @@ export class LinksService {
     // If we couldn't find a unique hash after max attempts, increase length
     return this.generateUniqueHash(length + 1);
   }
+
+  getDomainFromURL(url: string): string {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+
+    const parsedUrl = new URL(url);
+    const domain = parsedUrl.hostname;
+
+    return domain
+
+  }
+
+
 }

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -48,4 +49,10 @@ export class Link {
 
   @OneToMany(() => Visit, (visit) => visit.link)
   visits: Visit[];
+
+  @Column({
+    nullable: true
+  })
+  @Index()
+  publicURL: string
 }
