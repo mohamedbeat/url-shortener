@@ -1,4 +1,5 @@
 // app/routes/dashboard/index.tsx
+import { CreateLinkDialog } from '@/components/dashboard/create-link-dialog'
 import { QuickActions } from '@/components/dashboard/overview/quick-actions'
 import { QuickAnalytics } from '@/components/dashboard/overview/quick-analytics'
 import { QuickStatsGrid } from '@/components/dashboard/overview/quick-stats-grid'
@@ -31,11 +32,13 @@ const EmptyState = () => (
     <CardContent className="flex justify-center pb-8">
       <Link to="/dashboard">
 
-        <Button size="lg" >
-          <Link2 className="mr-2 h-5 w-5" />
-          Create your first short link
+        <CreateLinkDialog >
+          <Button size="lg" >
+            <Link2 className="mr-2 h-5 w-5" />
+            Create your first short link
+          </Button>
+        </CreateLinkDialog>
 
-        </Button>
       </Link>
     </CardContent>
   </Card>
@@ -69,12 +72,13 @@ function DashboardPage() {
             Welcome back! Here's what's happening with your links today.
           </p>
         </div>
-        <Link to="/dashboard" className='w-full sm:w-max sm:block'>
-          <Button className={"w-full"} >
-            <Link2 className="mr-2 h-4 w-4" />
-            Create new link
+        <CreateLinkDialog >
+          <Button size="lg" >
+            <Link2 className="mr-2 h-5 w-5" />
+            Create your short link
           </Button>
-        </Link>
+        </CreateLinkDialog>
+
       </div>
 
       {/* Stats grid */}

@@ -22,7 +22,7 @@ export function SideBarThemeToggler() {
     }
 
     return (
-        <SidebarMenuButton onClick={handleThemeToggle}>
+        <SidebarMenuButton onClick={handleThemeToggle} className="cursor-pointer" >
             {theme === "light" && <SunDim />}
             {theme === "dark" && <Moon />}
             {theme === "system" && <MonitorSmartphone />}

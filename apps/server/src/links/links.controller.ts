@@ -38,6 +38,17 @@ export class LinksController {
     return this.linksService.findAll(pagination.page, pagination.limit, filter);
   }
 
+  @Get("stats")
+  async getStats() {
+    return await this.linksService.getStats()
+  }
+
+  @Get('checkSlug/:slug')
+  checkIfSlugExists(@Param('slug') slug: string) {
+    return this.linksService.checkIfSlugExists(slug);
+  }
+
+
   @Get('byhash/:hash')
   findByHash(@Param('hash') hash: string) {
     return this.linksService.findByHash(hash);

@@ -203,6 +203,7 @@ export function AppSidebar({
 
                       <Link to={item.url}>
                         <SidebarMenuButton
+                          className='cursor-pointer'
                           tooltip={item.description}
                           isActive={window.location.pathname === item.url}
                         >
@@ -234,6 +235,7 @@ export function AppSidebar({
 
                   <Link to={item.url}>
                     <SidebarMenuButton
+                      className='cursor-pointer'
                       tooltip={item.description}
                       isActive={window.location.pathname === item.url}
                     >

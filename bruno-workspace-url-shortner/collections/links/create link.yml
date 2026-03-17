@@ -10,8 +10,7 @@ http:
     type: json
     data: |-
       {
-        "title":"example",
-        "url":"https://facebook.com/idk"
+        
       }
   auth: inherit
 

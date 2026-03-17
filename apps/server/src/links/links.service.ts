@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -221,5 +221,33 @@ export class LinksService {
 
   }
 
+  async checkIfSlugExists(slug: string) {
+    const found = await this.linkRepo.findOneBy({
+      customSlug: slug
+    })
+
+    if (!found) {
+      return {
+        available: true
+      }
+    }
+    return {
+      available: false
+    }
+  }
+
+
+  async getStats() {
+    throw new InternalServerErrorException()
+    const totalLinks = await this.linkRepo.count()
+
+    //i want to calcute total clicks 
+    const totalClicks = await this.linkRepo.sum('totalClicks')
+
+    return {
+      totalLinks,
+      totalClicks: totalClicks || 0
+    }
+  }
 
 }
