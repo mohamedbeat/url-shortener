@@ -9,7 +9,7 @@ export function SideBarFooter() {
       <SidebarMenu>
         <SidebarMenuItem>
           <Link to="/dashboard">
-            <SidebarMenuButton tooltip="Documentation and support" className="p-0 m-0">
+            <SidebarMenuButton tooltip="Documentation and support" >
               <HelpCircle />
               <span>Help & Support</span>
             </SidebarMenuButton>
