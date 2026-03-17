@@ -256,7 +256,7 @@ export function AppSidebar({
 
       {/* Footer with User Profile */}
 
-      <SidebarSeparator />
+      <SidebarSeparator className={"ml-0"} />
       <SideBarFooter />
       <SidebarRail />
     </Sidebar>

@@ -5,21 +5,17 @@ import { HelpCircle } from "lucide-react";
 
 export function SideBarFooter() {
   return (
-    <SidebarFooter className="w-full h-max">
-      <SidebarGroup>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <Link to="/dashboard">
-                <SidebarMenuButton tooltip="Documentation and support">
-                  <HelpCircle />
-                  <span>Help & Support</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
+    <SidebarFooter  >
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <Link to="/dashboard">
+            <SidebarMenuButton tooltip="Documentation and support" className="p-0 m-0">
+              <HelpCircle />
+              <span>Help & Support</span>
+            </SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
+      </SidebarMenu>
     </SidebarFooter >
 
   );
