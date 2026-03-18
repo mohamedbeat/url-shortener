@@ -1,5 +1,6 @@
 import axiosInstance from '@/lib/axios';
 import type { Link } from '@/types/link';
+import { type Pagination } from "@packages/shared/types"
 
 import { z } from 'zod';
 
@@ -30,3 +31,19 @@ export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
     const response = await axiosInstance.get<{ available: boolean }>(`api/links/checkSlug/${slug}`);
     return response.data.available;
 };
+
+
+export const getAllLinks = async (params: {
+    page?: string,
+    limit?: string
+}): Promise<Pagination<Link>> => {
+
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    const page = params?.page ?? 1;
+    const limit = params?.limit ?? 10;
+
+    const res = await axiosInstance.get<Pagination<Link>>(`api/links?page=${page}&limit=${limit}`,)
+    return res.data
+
+}

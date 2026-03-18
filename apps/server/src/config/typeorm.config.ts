@@ -10,7 +10,9 @@ export const typeOrmConfig = TypeOrmModule.forRootAsync({
   useFactory: async (envService: EnvService) => ({
     type: 'sqlite',
     database: envService.database.database,
-    entities: [Link, Visit],
+    // NOTE: this should look for entities from 
+    entities: ["dist/**/*.entity.js"],
+    // entities: [Link, Visit],
     synchronize: envService.isDevelopment(),
   }),
 });

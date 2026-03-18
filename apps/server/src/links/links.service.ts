@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -238,7 +238,7 @@ export class LinksService {
 
 
   async getStats() {
-    throw new InternalServerErrorException()
+    // throw new InternalServerErrorException()
     const totalLinks = await this.linkRepo.count()
 
     //i want to calcute total clicks 

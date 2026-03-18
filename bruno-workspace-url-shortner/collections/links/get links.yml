@@ -5,13 +5,13 @@ info:
 
 http:
   method: GET
-  url: "{{api_url}}/api/links?page=1&limit=3&shortHash&title&url&customSlug"
+  url: "{{api_url}}/api/links?page=1&limit=10&shortHash&title&url&customSlug"
   params:
     - name: page
       value: "1"
       type: query
     - name: limit
-      value: "3"
+      value: "10"
       type: query
     - name: shortHash
       value: ""
