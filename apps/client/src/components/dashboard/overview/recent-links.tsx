@@ -9,15 +9,20 @@ import { getAllLinks } from "@/lib/api/links";
 import { handleApiError } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { AlertCircleIcon, Copy, Edit, ExternalLink, MoreHorizontal, ServerCrash, Trash2 } from "lucide-react";
+import { AlertCircleIcon, Copy, Edit, ExternalLink, MoreHorizontal, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { DeleteLinkDialog } from "../delete-link-dialog";
 
 
 export function RecentLinks() {
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [deleteLinkId, setDeleteLinkId] = useState<string | null>(null);
 
     const { isPending, isError, error, data, refetch } = useQuery({
         queryKey: ["links"],
         queryFn: () => getAllLinks({})
     })
+
 
     if (isError) {
         const err = handleApiError(error)
@@ -184,6 +189,14 @@ export function RecentLinks() {
                 </Link>
             </CardHeader>
             <CardContent>
+                <DeleteLinkDialog
+                    id={deleteLinkId}
+                    open={deleteDialogOpen}
+                    onOpenChange={(open) => {
+                        setDeleteDialogOpen(open);
+                        if (!open) setDeleteLinkId(null);
+                    }}
+                />
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -230,11 +243,11 @@ export function RecentLinks() {
                                     <DropdownMenu>
                                         <DropdownMenuGroup>
 
-                                            <DropdownMenuTrigger >
-                                                <Button variant="ghost" size="icon" className={"cursor-pointer"}>
+                                            <Button variant="ghost" size="icon" className={"cursor-pointer"}>
+                                                <DropdownMenuTrigger>
                                                     <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
+                                                </DropdownMenuTrigger>
+                                            </Button>
 
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -255,7 +268,15 @@ export function RecentLinks() {
                                                     Edit
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator />
-                                                <DropdownMenuItem className="text-destructive">
+                                                <DropdownMenuItem
+                                                    className="text-destructive cursor-pointer"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setDeleteLinkId(link.id);
+                                                        setDeleteDialogOpen(true);
+                                                    }}
+                                                >
+
                                                     <Trash2 className="mr-2 h-4 w-4" />
                                                     Delete
                                                 </DropdownMenuItem>
@@ -264,11 +285,13 @@ export function RecentLinks() {
                                         </DropdownMenuGroup>
                                     </DropdownMenu>
                                 </TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </CardContent>
+
         </Card >
     )
 }

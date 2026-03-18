@@ -8,10 +8,13 @@ import { RecentLinks } from '@/components/dashboard/overview/recent-links'
 import { TopLinks } from '@/components/dashboard/overview/top-links'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { getAllLinks } from '@/lib/api/links'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   Link2,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/(auth)/dashboard/_l/')({
   component: DashboardPage,
@@ -45,8 +48,17 @@ const EmptyState = () => (
 )
 
 function DashboardPage() {
-  // For demo purposes, show empty state if no links
-  const hasLinks = true// Change to false to see empty state
+  const { isPending, isError, error, data, refetch } = useQuery({
+    queryKey: ["links"],
+    queryFn: () => getAllLinks({})
+  })
+  const [hasLinks, setHasLinks] = useState(false)
+
+  useEffect(() => {
+    if (data?.data?.length && data.data.length > 0) {
+      setHasLinks(true)
+    }
+  }, [data])
 
   if (!hasLinks) {
     return (

@@ -23,6 +23,7 @@ export type CreateLinkInput = z.infer<typeof createLinkSchema>;
 
 
 export const createLink = async (data: CreateLinkInput): Promise<Link> => {
+    console.log("creating")
     const response = await axiosInstance.post<Link>('api/links', data);
     return response.data;
 };
@@ -43,7 +44,7 @@ export const getAllLinks = async (params: {
     }
 ): Promise<Pagination<Link>> => {
 
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // await new Promise(resolve => setTimeout(resolve, 1000));
 
     const page = params?.page ?? 1;
     const limit = params?.limit ?? 10;
@@ -54,4 +55,20 @@ export const getAllLinks = async (params: {
     const res = await axiosInstance.get<Pagination<Link>>(`api/links?page=${page}&limit=${limit}&field=${field}&order=${order}`,)
     return res.data
 
+}
+
+
+export const deleteLink = async (id: string) => {
+
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    const res = await axiosInstance.delete(`/api/links/${id}`, {
+    });
+
+    return true;
+}
+export const getlinkById = async (id: string) => {
+    const res = await axiosInstance.get<Link>(`/api/links/${id}`, {
+    });
+
+    return res.data;
 }
