@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getAllLinks } from "@/lib/api/links";
-import { handleApiError } from "@/lib/axios";
+import { BASE_URL, handleApiError } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { AlertCircleIcon, Copy, Edit, ExternalLink, MoreHorizontal, Trash2 } from "lucide-react";
@@ -85,6 +85,7 @@ export function RecentLinks() {
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead></TableHead>
                                 <TableHead>Link</TableHead>
                                 <TableHead>Original URL</TableHead>
                                 <TableHead className="text-center">Clicks</TableHead>
@@ -98,6 +99,9 @@ export function RecentLinks() {
                                 [...Array(6)].map((_, i) => {
                                     return (
                                         <TableRow key={i} id={i.toString()}>
+                                            <TableCell>
+                                                <div className="font-medium"><Skeleton className="h-10 w-16" /></div>
+                                            </TableCell>
                                             <TableCell>
                                                 <div className="font-medium"><Skeleton className="h-4 w-32" /></div>
                                                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -200,6 +204,7 @@ export function RecentLinks() {
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableCell></TableCell>
                             <TableHead>Link</TableHead>
                             <TableHead>Original URL</TableHead>
                             <TableHead className="text-center">Clicks</TableHead>
@@ -211,6 +216,11 @@ export function RecentLinks() {
                     <TableBody>
                         {data?.data.map((link) => (
                             <TableRow key={link.id}>
+                                <TableCell>
+                                    <div className="h-7 w-7" >
+                                        <img src={link.publicURL} className="h-full w-full" />
+                                    </div>
+                                </TableCell>
                                 <TableCell>
                                     <div className="font-medium">{link.title}</div>
                                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -251,7 +261,7 @@ export function RecentLinks() {
 
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <a target="_blank" href={`http://localhost:3000/${link.customSlug ? link.customSlug : link.shortHash}`} >
+                                                <a target="_blank" href={`${BASE_URL}${link.customSlug ? link.customSlug : link.shortHash}`} >
                                                     <DropdownMenuItem className={"cursor-pointer"}>
                                                         <ExternalLink className="mr-2 h-4 w-4" />
                                                         <p>

@@ -8,6 +8,7 @@ import { RecentLinks } from '@/components/dashboard/overview/recent-links'
 import { TopLinks } from '@/components/dashboard/overview/top-links'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import { getAllLinks } from '@/lib/api/links'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -48,12 +49,14 @@ function DashboardPage() {
     queryKey: ["links"],
     queryFn: () => getAllLinks({})
   })
-  const [hasLinks, setHasLinks] = useState(false)
+  const [hasLinks, setHasLinks] = useState(true)
 
   useEffect(() => {
-    if (data?.data?.length && data.data.length > 0) {
-      setHasLinks(true)
-    }
+    // if (data?.data?.length && data.data.length > 0) {
+    //   setHasLinks(true)
+    // } else {
+    //   setHasLinks(false)
+    // }
   }, [data])
 
   if (!hasLinks) {
@@ -72,6 +75,7 @@ function DashboardPage() {
 
   return (
     <div className="space-y-6 ">
+
       {/* Page header */}
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between  ">
         <div className=''>
@@ -89,7 +93,18 @@ function DashboardPage() {
 
       </div>
 
+      <Separator />
+
+      {/* Quick actions */}
+      <div className=''>
+        <h1 className="text-xl font-bold tracking-tight">Quick actions</h1>
+      </div>
+      <QuickActions />
+      <Separator />
       {/* Stats grid */}
+      <div className=''>
+        <h1 className="text-xl font-bold tracking-tight">Quick Stats</h1>
+      </div>
       <QuickStatsGrid />
 
       {/* Main content grid */}
@@ -110,8 +125,6 @@ function DashboardPage() {
       {/* Analytics tabs */}
       <QuickAnalytics />
 
-      {/* Quick actions */}
-      <QuickActions />
     </div>
   )
 }

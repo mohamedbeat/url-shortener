@@ -83,7 +83,10 @@ export function DeleteLinkDialog({ id, open, onOpenChange }: DeleteLinkDialogPro
         ) : null}
 
         {canFetch && linkQuery.isSuccess ? (
-          <div className="space-y-2">
+          <div className="space-y-2 flex items-center justify-items-end gap-5">
+            <div className="h-16 w-16">
+              <img src={linkQuery.data.publicURL} alt="" className="w-full h-full" />
+            </div>
             <div>
               <div className="text-sm font-medium">{linkQuery.data.title}</div>
               <div className="text-sm text-muted-foreground break-all">{linkQuery.data.url}</div>

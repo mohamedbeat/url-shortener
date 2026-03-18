@@ -106,8 +106,11 @@ export function TopLinks() {
                 <div className="space-y-4">
                     {data.data.map((link) => (
                         <div key={link.id} className="space-y-2">
-                            <div className="flex items-center justify-between text-sm">
-                                <div>
+                            <div className="flex items-center gap-4 text-sm">
+                                <div className="h-7 w-7" >
+                                    <img src={link.publicURL} className="h-full w-full" />
+                                </div>
+                                <div className='flex-1'>
                                     <p className="font-medium">{link.title}</p>
                                     <p className="text-muted-foreground">{link.url}</p>
                                 </div>

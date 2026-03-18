@@ -44,7 +44,7 @@ export const getAllLinks = async (params: {
     }
 ): Promise<Pagination<Link>> => {
 
-    // await new Promise(resolve => setTimeout(resolve, 1000));
+    // await new Promise(resolve => setTimeout(resolve, 3000));
 
     const page = params?.page ?? 1;
     const limit = params?.limit ?? 10;

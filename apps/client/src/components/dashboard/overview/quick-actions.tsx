@@ -17,12 +17,10 @@ export function QuickActions() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Link to="/dashboard">
-                        <Button variant="outline" className="w-full" >
-                            <Zap className="mr-2 h-4 w-4" />
-                            Bulk shorten
-                        </Button>
-                    </Link>
+                    <Button variant="outline" className="w-full cursor-pointer" >
+                        <Zap className="mr-2 h-4 w-4" />
+                        Bulk shorten
+                    </Button>
                 </CardContent>
             </Card>
             <Card>
@@ -33,12 +31,10 @@ export function QuickActions() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Link to="/dashboard">
-                        <Button variant="outline" className="w-full" >
-                            <QrCode className="mr-2 h-4 w-4" />
-                            Create QR code
-                        </Button>
-                    </Link>
+                    <Button variant="outline" className="w-full cursor-pointer" >
+                        <QrCode className="mr-2 h-4 w-4" />
+                        Create QR code
+                    </Button>
                 </CardContent>
             </Card>
             <Card>
@@ -49,7 +45,7 @@ export function QuickActions() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full cursor-pointer">
                         <Calendar className="mr-2 h-4 w-4" />
                         Export CSV
                     </Button>
