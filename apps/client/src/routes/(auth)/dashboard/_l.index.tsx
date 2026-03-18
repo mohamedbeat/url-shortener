@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getAllLinks } from '@/lib/api/links'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import {
   Link2,
 } from 'lucide-react'
@@ -33,22 +33,18 @@ const EmptyState = () => (
       </CardDescription>
     </CardHeader>
     <CardContent className="flex justify-center pb-8">
-      <Link to="/dashboard">
-
-        <CreateLinkDialog >
-          <Button size="lg" >
-            <Link2 className="mr-2 h-5 w-5" />
-            Create your first short link
-          </Button>
-        </CreateLinkDialog>
-
-      </Link>
+      <CreateLinkDialog>
+        <Button size="lg">
+          <Link2 className="mr-2 h-5 w-5" />
+          Create your first short link
+        </Button>
+      </CreateLinkDialog>
     </CardContent>
   </Card>
 )
 
 function DashboardPage() {
-  const { isPending, isError, error, data, refetch } = useQuery({
+  const { data } = useQuery({
     queryKey: ["links"],
     queryFn: () => getAllLinks({})
   })

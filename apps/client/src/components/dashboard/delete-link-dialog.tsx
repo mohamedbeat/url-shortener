@@ -37,7 +37,7 @@ export function DeleteLinkDialog({ id, open, onOpenChange }: DeleteLinkDialogPro
   const deleteMutation = useMutation({
     mutationFn: (linkId: string) => deleteLink(linkId),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["links"] });
+      await queryClient.invalidateQueries({ queryKey: ["links", "stats", "top-links"] });
       if (id) {
         queryClient.removeQueries({ queryKey: ["link", id] });
       }
