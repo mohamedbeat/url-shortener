@@ -1,6 +1,6 @@
 import axiosInstance from '@/lib/axios';
 import type { Link } from '@/types/link';
-import { type Pagination } from "@packages/shared/types"
+import { type LinkSortFields, type Pagination, type SortOrder } from "@packages/shared/types"
 
 import { z } from 'zod';
 
@@ -36,12 +36,22 @@ export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
 export const getAllLinks = async (params: {
     page?: string,
     limit?: string
-}): Promise<Pagination<Link>> => {
+},
+    sort?: {
+        field?: LinkSortFields,
+        order?: SortOrder
+    }
+): Promise<Pagination<Link>> => {
+
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     const page = params?.page ?? 1;
     const limit = params?.limit ?? 10;
+    const field = sort?.field ?? 'createdAt'
+    const order = sort?.order ?? 'DESC'
 
-    const res = await axiosInstance.get<Pagination<Link>>(`api/links?page=${page}&limit=${limit}`,)
+
+    const res = await axiosInstance.get<Pagination<Link>>(`api/links?page=${page}&limit=${limit}&field=${field}&order=${order}`,)
     return res.data
 
 }

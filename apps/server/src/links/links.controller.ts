@@ -16,6 +16,7 @@ import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { PaginationDto } from '../common/dtos/paginationQuery.dto';
 import { FindAllLinksFiltersDto } from './dto/find-all-filter.dto';
+import { SortLinksDto } from './dto/sort-links-query.dto';
 
 @Controller('api/links')
 export class LinksController {
@@ -29,14 +30,16 @@ export class LinksController {
   @Get()
   findAll(
     @Query() pagination: PaginationDto,
-    @Query() filter: FindAllLinksFiltersDto
+    @Query() filter: FindAllLinksFiltersDto,
+    @Query() sort: SortLinksDto
   ) {
 
     if (pagination.limit && pagination.limit > 100) {
       pagination.limit = 100
     }
 
-    return this.linksService.findAll(pagination.page, pagination.limit, filter);
+
+    return this.linksService.findAll(pagination.page, pagination.limit, filter, sort);
   }
 
   @Get("stats")

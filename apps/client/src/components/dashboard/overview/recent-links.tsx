@@ -201,7 +201,7 @@ export function RecentLinks() {
                                 <TableCell>
                                     <div className="font-medium">{link.title}</div>
                                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                        <span>http://localhost:3000/{link.shortHash}</span>
+                                        <span>http://localhost:3000/{link.customSlug ? link.customSlug : link.shortHash}</span>
                                         <Button variant="ghost" size="icon" className="h-5 w-5">
                                             <Copy className="h-3 w-3" />
                                         </Button>
@@ -238,7 +238,7 @@ export function RecentLinks() {
 
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <a target="_blank" href={`http://localhost:3000/${link.shortHash}`} >
+                                                <a target="_blank" href={`http://localhost:3000/${link.customSlug ? link.customSlug : link.shortHash}`} >
                                                     <DropdownMenuItem className={"cursor-pointer"}>
                                                         <ExternalLink className="mr-2 h-4 w-4" />
                                                         <p>

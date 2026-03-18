@@ -1,42 +1,99 @@
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
+import { getAllLinks } from '@/lib/api/links'
+import { getStats } from '@/lib/api/stats'
+import { handleApiError } from '@/lib/axios'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
+import { AlertCircleIcon } from 'lucide-react'
 
 
-// Mock data for top performing links
-const topLinks = [
-    {
-        id: '1',
-        title: 'Black Friday Deals',
-        shortUrl: 'sho.rt/bf2024',
-        clicks: 3456,
-        percentage: 100,
-    },
-    {
-        id: '2',
-        title: 'Newsletter Signup',
-        shortUrl: 'sho.rt/newsletter',
-        clicks: 2341,
-        percentage: 68,
-    },
-    {
-        id: '3',
-        title: 'Summer Sale 2024',
-        shortUrl: 'sho.rt/summer24',
-        clicks: 1234,
-        percentage: 36,
-    },
-    {
-        id: '4',
-        title: 'Blog Post - React Tips',
-        shortUrl: 'sho.rt/react-tips',
-        clicks: 856,
-        percentage: 25,
-    },
-]
+
 
 export function TopLinks() {
+
+    const limit = 5
+    const { data, isPending, isError, error, refetch } = useQuery({
+        queryKey: ['top-links'],
+        queryFn: () => getAllLinks({ limit: limit.toString() }, {
+            field: 'totalClicks',
+            order: 'DESC'
+        })
+    })
+
+    const statsQuery = useQuery({
+        queryKey: ['stats'],
+        queryFn: getStats
+    })
+
+
+    function calculatePercentage(count: number, total: number) {
+        return (count * 100) / total
+    }
+
+
+    if (isError) {
+        const err = handleApiError(error)
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Top Performing Links</CardTitle>
+                    <CardDescription>
+                        Your most clicked links this month
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Alert variant="destructive" className="p-4">
+                        <AlertCircleIcon />
+                        <AlertTitle>Something went wrong</AlertTitle>
+                        <AlertDescription>
+                            <p>
+                                Something went wrong while fetching recent links data. <Button onClick={async () => await refetch()} variant={'link'} className={"cursor-pointer"}>
+                                    Retry?
+                                </Button>
+                            </p>
+                            <p>{err.message}</p>
+
+                        </AlertDescription>
+                    </Alert>
+                </CardContent>
+            </Card>
+        )
+    }
+
+    if (isPending) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Top Performing Links</CardTitle>
+                    <CardDescription>
+                        Your most clicked links this month
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="space-y-2">
+                                <div className="flex items-center justify-between text-sm">
+                                    <div className='w-full mr-2'>
+                                        <Skeleton className='h-2 w-full' />
+                                        <Skeleton className='h-2 w-full' />
+                                    </div>
+                                    <Skeleton className='h-2 w-14' />
+                                </div>
+                                {/* <Progress value={link.percentage} className="h-2" /> */}
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+
+        )
+    }
+
     return (
         <Card>
             <CardHeader>
@@ -47,16 +104,19 @@ export function TopLinks() {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    {topLinks.map((link) => (
+                    {data.data.map((link) => (
                         <div key={link.id} className="space-y-2">
                             <div className="flex items-center justify-between text-sm">
                                 <div>
                                     <p className="font-medium">{link.title}</p>
-                                    <p className="text-muted-foreground">{link.shortUrl}</p>
+                                    <p className="text-muted-foreground">{link.url}</p>
                                 </div>
-                                <span className="font-medium">{link.clicks} clicks</span>
+                                <span className="font-medium">{link.totalClicks} clicks</span>
                             </div>
-                            <Progress value={link.percentage} className="h-2" />
+                            {
+                                statsQuery.data?.totalClicks && <Progress value={calculatePercentage(link.totalClicks, statsQuery.data.totalClicks)} className="h-2" />
+                            }
+
                         </div>
                     ))}
                 </div>

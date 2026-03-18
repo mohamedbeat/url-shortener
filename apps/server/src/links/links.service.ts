@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Link } from './entities/link.entity';
 import { Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
-import { type Pagination } from "@packages/shared/types"
+import { LinkSortFields, SortOrder, type Pagination } from "@packages/shared/types"
 import { S3Service } from '../common/s3.service';
 
 @Injectable()
@@ -83,6 +83,10 @@ export class LinksService {
       shortHash?: string;
       customSlug?: string
     },
+    sort?: {
+      field?: LinkSortFields
+      order?: SortOrder
+    }
   ): Promise<Pagination<Link>> {
     const queryBuilder = this.linkRepo.createQueryBuilder('link');
 
@@ -108,9 +112,16 @@ export class LinksService {
     // Get total count before pagination
     const total = await queryBuilder.getCount();
 
+    // Apply sorting
+    if (sort) {
+      queryBuilder.orderBy(`link.${sort.field}`, sort.order);
+    } else {
+      // Default sorting
+      queryBuilder.orderBy('link.createdAt', 'DESC');
+    }
+
     // Apply pagination and ordering
     const data = await queryBuilder
-      .orderBy('link.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit)
       .getMany();
