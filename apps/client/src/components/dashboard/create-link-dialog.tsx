@@ -29,7 +29,7 @@ export function CreateLinkDialog({ onSuccess, children }: CreateLinkDialogProps)
     const createLinkMutation = useMutation({
         mutationFn: createLink,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['links'] });
+            queryClient.invalidateQueries({ queryKey: ['links'], exact: false });
 
             setOpen(false);
             onSuccess?.();

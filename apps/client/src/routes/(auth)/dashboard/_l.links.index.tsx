@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useNavigate } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -11,9 +11,13 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Copy,
+  Trash2,
+  Eye,
+  EyeOff,
+  MoreVertical,
 } from 'lucide-react';
 
-// UI Components
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -27,10 +31,6 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getAllLinks } from '@/lib/api/links';
-import type { LinksQueryParams, } from '@/types/link';
-import { CreateLinkDialog } from '@/components/dashboard/create-link-dialog';
-import { BASE_URL } from '@/lib/axios';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,7 +38,15 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+
+// import { useToast } from '@/hooks/use-toast';
+
+import { getAllLinks, toggleLinkStatus } from '@/lib/api/links';
+import type { LinksQueryParams } from '@/types/link';
+import { CreateLinkDialog } from '@/components/dashboard/create-link-dialog';
+import { BASE_URL } from '@/lib/axios';
 import type { LinkSortFields, SortOrder } from '@packages/shared/types';
+import { DeleteLinkDialog } from '@/components/dashboard/delete-link-dialog';
 
 // Types and API
 export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
@@ -56,6 +64,13 @@ export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
 function LinksPage() {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
+  const queryClient = useQueryClient();
+  const [deleteLinkId, setDeleteLinkId] = useState<string | null>(null);
+  // const { toast } = useToast();
+
+  // State for delete dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
 
   // Fetch links with query params including sorting
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -71,6 +86,47 @@ function LinksPage() {
       }
     ),
   });
+
+
+
+  // Toggle status mutation
+  const toggleStatusMutation = useMutation({
+    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
+      toggleLinkStatus(id, {
+        isActive
+      }),
+    onSuccess: (updatedLink) => {
+      queryClient.invalidateQueries({ queryKey: ['links'] });
+      // toast({
+      //   title: 'Status updated',
+      //   description: `Link is now ${updatedLink.isActive ? 'active' : 'inactive'}.`,
+      // });
+    },
+    onError: (error) => {
+      // toast({
+      //   title: 'Error',
+      //   description: error instanceof Error ? error.message : 'Failed to update link status',
+      //   variant: 'destructive',
+      // });
+    },
+  });
+
+  // Copy to clipboard function
+  const copyToClipboard = async (text: string, title: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      // toast({
+      //   title: 'Copied!',
+      //   description: `${title} has been copied to clipboard.`,
+      // });
+    } catch (err) {
+      // toast({
+      //   title: 'Error',
+      //   description: 'Failed to copy to clipboard',
+      //   variant: 'destructive',
+      // });
+    }
+  };
 
   // Handle pagination
   const handlePageChange = (newPage: number) => {
@@ -89,6 +145,8 @@ function LinksPage() {
       }
     });
   };
+
+
 
   // Get sort icon
   const getSortIcon = (field: LinkSortFields) => {
@@ -131,7 +189,7 @@ function LinksPage() {
       {/* Links Table */}
       <Card>
         <CardContent className="p-6">
-          <div className="border ">
+          <div className="rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -181,66 +239,136 @@ function LinksPage() {
                     </TableRow>
                   ))
                 ) : data?.data.length ? (
-                  data.data.map((link) => (
-                    <TableRow key={link.id}>
-                      <TableCell>
-                        <div className="flex items-center space-x-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={link.publicURL} alt={link.title} />
-                            <AvatarFallback className="text-xs">
-                              {link.title.slice(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">{link.title}</div>
-                            <div className="text-sm text-muted-foreground truncate max-w-[250px]">
-                              {link.url}
+                  data.data.map((link) => {
+                    const shortUrl = `${BASE_URL}${link.shortHash}`;
+                    const isStatusPending = toggleStatusMutation.isPending &&
+                      toggleStatusMutation.variables?.id === link.id;
+
+                    return (
+                      <TableRow key={link.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={link.publicURL} alt={link.title} />
+                              <AvatarFallback className="text-xs">
+                                {link.title.slice(0, 2).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium">{link.title}</div>
+                              <div className="text-sm text-muted-foreground truncate max-w-[250px]">
+                                {link.url}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <code className="relative bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm rounded">
-                          {link.customSlug || link.shortHash}
-                        </code>
-                      </TableCell>
-                      <TableCell className="text-center font-medium">
-                        {link.totalClicks.toLocaleString()}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className={link.isActive ? 'bg-green-600 hover:bg-green-700' : ''}
-                          variant={link.isActive ? 'default' : 'secondary'}
-                        >
-                          {link.isActive ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(new Date(link.createdAt), { addSuffix: true })}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <Button variant="ghost" size="sm">
-                            <DropdownMenuTrigger >
-                              <ExternalLink className="h-4 w-4" />
-                            </DropdownMenuTrigger>
-                          </Button>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => window.open(`${BASE_URL}${link.shortHash}`, '_blank')}
-                            >
-                              Open short URL
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => window.open(link.url, '_blank')}
-                            >
-                              Open original URL
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                        </TableCell>
+                        <TableCell>
+                          <code className="relative bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm rounded">
+                            {link.customSlug || link.shortHash}
+                          </code>
+                        </TableCell>
+                        <TableCell className="text-center font-medium">
+                          {link.totalClicks.toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            className={link.isActive ? 'bg-green-600 hover:bg-green-700' : ''}
+                            variant={link.isActive ? 'default' : 'secondary'}
+                          >
+                            {link.isActive ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {formatDistanceToNow(new Date(link.createdAt), { addSuffix: true })}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <DropdownMenuTrigger >
+                                <MoreVertical className="h-4 w-4" />
+                              </DropdownMenuTrigger>
+                            </Button>
+                            <DropdownMenuContent align="end" className="w-48">
+                              {/* Copy Options */}
+                              <DropdownMenuItem
+                                onClick={() => copyToClipboard(shortUrl, 'Short URL')}
+                                className="cursor-pointer"
+                              >
+                                <Copy className="mr-2 h-4 w-4" />
+                                <span>Copy short URL</span>
+                              </DropdownMenuItem>
+
+                              <DropdownMenuItem
+                                onClick={() => copyToClipboard(link.url, 'Original URL')}
+                                className="cursor-pointer"
+                              >
+                                <Copy className="mr-2 h-4 w-4" />
+                                <span>Copy original URL</span>
+                              </DropdownMenuItem>
+
+                              <DropdownMenuSeparator />
+
+                              {/* Open Options */}
+                              <DropdownMenuItem
+                                onClick={() => window.open(shortUrl, '_blank')}
+                                className="cursor-pointer"
+                              >
+                                <ExternalLink className="mr-2 h-4 w-4" />
+                                <span>Open short URL</span>
+                              </DropdownMenuItem>
+
+                              <DropdownMenuItem
+                                onClick={() => window.open(link.url, '_blank')}
+                                className="cursor-pointer"
+                              >
+                                <ExternalLink className="mr-2 h-4 w-4" />
+                                <span>Open original URL</span>
+                              </DropdownMenuItem>
+
+                              <DropdownMenuSeparator />
+
+                              {/* Toggle Status */}
+                              <DropdownMenuItem
+                                onClick={() => toggleStatusMutation.mutate({
+                                  id: link.id,
+                                  isActive: !link.isActive
+                                })}
+                                disabled={isStatusPending}
+                                className="cursor-pointer"
+                              >
+                                {isStatusPending ? (
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : link.isActive ? (
+                                  <EyeOff className="mr-2 h-4 w-4" />
+                                ) : (
+                                  <Eye className="mr-2 h-4 w-4" />
+                                )}
+                                <span>
+                                  {link.isActive ? 'Deactivate' : 'Activate'}
+                                </span>
+                              </DropdownMenuItem>
+
+                              <DropdownMenuSeparator />
+
+                              {/* Delete Option */}
+                              <DropdownMenuItem
+                                // onClick={() => handleDeleteClick(link.id, link.title)}
+                                className="cursor-pointer text-red-600 focus:text-red-600"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setDeleteLinkId(link.id);
+                                  setDeleteDialogOpen(true);
+                                }}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                <span>Delete</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
@@ -321,8 +449,16 @@ function LinksPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+
+      <DeleteLinkDialog id={deleteLinkId} open={deleteDialogOpen} onOpenChange={(open) => {
+        setDeleteDialogOpen(open);
+        if (!open) setDeleteLinkId(null);
+      }} />
+
     </div>
   );
 }
 
-export default LinksPage;
+export default LinksPage

@@ -75,8 +75,10 @@ export const getlinkById = async (id: string) => {
     return res.data;
 }
 
-export const toggleLinkStatus = async (id: string) => {
-    const res = await axiosInstance.patch<Link>(`/api/links/${id}`)
+export const toggleLinkStatus = async (id: string, data: {
+    isActive: boolean
+}) => {
+    const res = await axiosInstance.patch<Link>(`/api/links/${id}`, data)
     return res.data
 }
 
