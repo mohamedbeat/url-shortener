@@ -39,16 +39,14 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
-// import { useToast } from '@/hooks/use-toast';
-
 import { getAllLinks, toggleLinkStatus } from '@/lib/api/links';
 import type { LinksQueryParams } from '@/types/link';
 import { CreateLinkDialog } from '@/components/dashboard/create-link-dialog';
 import { BASE_URL } from '@/lib/axios';
 import type { LinkSortFields, SortOrder } from '@packages/shared/types';
 import { DeleteLinkDialog } from '@/components/dashboard/delete-link-dialog';
+import { toast } from 'sonner';
 
-// Types and API
 export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
   component: LinksPage,
   validateSearch: (search: Record<string, unknown>): LinksQueryParams => {
@@ -66,7 +64,6 @@ function LinksPage() {
   const search = Route.useSearch();
   const queryClient = useQueryClient();
   const [deleteLinkId, setDeleteLinkId] = useState<string | null>(null);
-  // const { toast } = useToast();
 
   // State for delete dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -97,17 +94,14 @@ function LinksPage() {
       }),
     onSuccess: (updatedLink) => {
       queryClient.invalidateQueries({ queryKey: ['links'] });
-      // toast({
-      //   title: 'Status updated',
-      //   description: `Link is now ${updatedLink.isActive ? 'active' : 'inactive'}.`,
-      // });
+      toast('Status updated', {
+        description: `Link is now ${updatedLink.isActive ? 'active' : 'inactive'}.`,
+      });
     },
     onError: (error) => {
-      // toast({
-      //   title: 'Error',
-      //   description: error instanceof Error ? error.message : 'Failed to update link status',
-      //   variant: 'destructive',
-      // });
+      toast.error('Error', {
+        description: error instanceof Error ? error.message : 'Failed to update link status',
+      });
     },
   });
 
@@ -115,16 +109,14 @@ function LinksPage() {
   const copyToClipboard = async (text: string, title: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      // toast({
-      //   title: 'Copied!',
-      //   description: `${title} has been copied to clipboard.`,
-      // });
+      toast('Copied!', {
+        description: `${title} has been copied to clipboard.`,
+
+      });
     } catch (err) {
-      // toast({
-      //   title: 'Error',
-      //   description: 'Failed to copy to clipboard',
-      //   variant: 'destructive',
-      // });
+      toast.error('Error', {
+        description: 'Failed to copy to clipboard',
+      });
     }
   };
 

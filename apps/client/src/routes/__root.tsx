@@ -1,8 +1,8 @@
 import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import appCss from "../index.css?url"
+import { Toaster } from '@/components/ui/sonner';
 
 const RootDocument = () => (
   <>
@@ -10,6 +10,12 @@ const RootDocument = () => (
     <ThemeProvider>
       <TooltipProvider>
         <Outlet />
+        <Toaster toastOptions={{
+          style: {
+            borderRadius: 0
+          }
+        }}
+        />
       </TooltipProvider>
     </ThemeProvider>
 
@@ -18,9 +24,7 @@ const RootDocument = () => (
 )
 
 
-// interface MyRouterContext {
-//   queryClient: QueryClient;
-// }
+
 
 // export const Route = createRootRouteWithContext<MyRouterContext>()({
 export const Route = createRootRouteWithContext()({
