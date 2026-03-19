@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{api_url}}/api/links?page=1&limit=10&shortHash&title&url&customSlug"
+  url: "{{api_url}}/api/links?page=1&limit=10&shortHash&title&url&customSlug&field=totalClicks&order=DESC"
   params:
     - name: page
       value: "1"
@@ -24,6 +24,12 @@ http:
       type: query
     - name: customSlug
       value: ""
+      type: query
+    - name: field
+      value: totalClicks
+      type: query
+    - name: order
+      value: DESC
       type: query
   auth: inherit
 

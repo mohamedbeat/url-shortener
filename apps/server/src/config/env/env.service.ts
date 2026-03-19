@@ -7,15 +7,15 @@ export class EnvService {
 
   get database() {
     return {
-      database: this.configService.get<string>('database.database'),
+      database: this.configService.getOrThrow<string>('database.database'),
     };
   }
 
   get app() {
     return {
-      port: this.configService.get<number>('app.port'),
-      name: this.configService.get<string>('app.name'),
-      environment: this.configService.get<string>('app.environment'),
+      port: this.configService.getOrThrow<number>('app.port'),
+      name: this.configService.getOrThrow<string>('app.name'),
+      environment: this.configService.getOrThrow<string>('app.environment'),
     };
   }
 

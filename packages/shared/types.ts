@@ -11,3 +11,6 @@ export type Pagination<T> = {
     hasPreviousPage: boolean
   }
 }
+
+export type SortOrder = 'ASC' | 'DESC'
+export type LinkSortFields = 'createdAt' | 'totalClicks' 
