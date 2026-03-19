@@ -3,7 +3,7 @@ import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Link } from './entities/link.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { LinkSortFields, SortOrder, type Pagination } from "@packages/shared/types"
 import { S3Service } from '../common/s3.service';
@@ -200,6 +200,12 @@ export class LinksService {
     return {
       message: "deleted successfully"
     }
+  }
+
+  async removeByIds(ids: string[]) {
+    await this.linkRepo.delete({
+      id: In(ids)
+    })
   }
 
   async generateUniqueHash(length: number = 8): Promise<string> {

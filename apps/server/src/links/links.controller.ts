@@ -17,6 +17,7 @@ import { UpdateLinkDto } from './dto/update-link.dto';
 import { PaginationDto } from '../common/dtos/paginationQuery.dto';
 import { FindAllLinksFiltersDto } from './dto/find-all-filter.dto';
 import { SortLinksDto } from './dto/sort-links-query.dto';
+import { IdsDto } from './dto/delete-by-ids.dto';
 
 @Controller('api/links')
 export class LinksController {
@@ -56,6 +57,11 @@ export class LinksController {
   @Get('byhash/:hash')
   findByHash(@Param('hash') hash: string) {
     return this.linksService.findByHash(hash);
+  }
+
+  @Delete('bulk-delete')
+  async deleteByIds(@Body() body: IdsDto) {
+    return await this.linksService.removeByIds(body.ids)
   }
 
   @Get(':id')

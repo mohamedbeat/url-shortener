@@ -13,6 +13,7 @@ import { Route as noauthLRouteImport } from './routes/(noauth)/_l'
 import { Route as noauthLIndexRouteImport } from './routes/(noauth)/_l.index'
 import { Route as authDashboardLRouteImport } from './routes/(auth)/dashboard/_l'
 import { Route as authDashboardLIndexRouteImport } from './routes/(auth)/dashboard/_l.index'
+import { Route as authDashboardLLinksIndexRouteImport } from './routes/(auth)/dashboard/_l.links.index'
 
 const noauthLRoute = noauthLRouteImport.update({
   id: '/(noauth)/_l',
@@ -33,15 +34,23 @@ const authDashboardLIndexRoute = authDashboardLIndexRouteImport.update({
   path: '/',
   getParentRoute: () => authDashboardLRoute,
 } as any)
+const authDashboardLLinksIndexRoute =
+  authDashboardLLinksIndexRouteImport.update({
+    id: '/links/',
+    path: '/links/',
+    getParentRoute: () => authDashboardLRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/dashboard': typeof authDashboardLRouteWithChildren
   '/': typeof noauthLIndexRoute
   '/dashboard/': typeof authDashboardLIndexRoute
+  '/dashboard/links/': typeof authDashboardLLinksIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof noauthLIndexRoute
   '/dashboard': typeof authDashboardLIndexRoute
+  '/dashboard/links': typeof authDashboardLLinksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -49,18 +58,20 @@ export interface FileRoutesById {
   '/(auth)/dashboard/_l': typeof authDashboardLRouteWithChildren
   '/(noauth)/_l/': typeof noauthLIndexRoute
   '/(auth)/dashboard/_l/': typeof authDashboardLIndexRoute
+  '/(auth)/dashboard/_l/links/': typeof authDashboardLLinksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/dashboard' | '/' | '/dashboard/'
+  fullPaths: '/dashboard' | '/' | '/dashboard/' | '/dashboard/links/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard'
+  to: '/' | '/dashboard' | '/dashboard/links'
   id:
     | '__root__'
     | '/(noauth)/_l'
     | '/(auth)/dashboard/_l'
     | '/(noauth)/_l/'
     | '/(auth)/dashboard/_l/'
+    | '/(auth)/dashboard/_l/links/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -98,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authDashboardLIndexRouteImport
       parentRoute: typeof authDashboardLRoute
     }
+    '/(auth)/dashboard/_l/links/': {
+      id: '/(auth)/dashboard/_l/links/'
+      path: '/links'
+      fullPath: '/dashboard/links/'
+      preLoaderRoute: typeof authDashboardLLinksIndexRouteImport
+      parentRoute: typeof authDashboardLRoute
+    }
   }
 }
 
@@ -114,10 +132,12 @@ const noauthLRouteWithChildren =
 
 interface authDashboardLRouteChildren {
   authDashboardLIndexRoute: typeof authDashboardLIndexRoute
+  authDashboardLLinksIndexRoute: typeof authDashboardLLinksIndexRoute
 }
 
 const authDashboardLRouteChildren: authDashboardLRouteChildren = {
   authDashboardLIndexRoute: authDashboardLIndexRoute,
+  authDashboardLLinksIndexRoute: authDashboardLLinksIndexRoute,
 }
 
 const authDashboardLRouteWithChildren = authDashboardLRoute._addFileChildren(

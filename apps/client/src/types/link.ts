@@ -1,3 +1,4 @@
+import type { LinkSortFields, SortOrder } from "@packages/shared/types";
 
 
 export type Link = {
@@ -12,3 +13,11 @@ export type Link = {
     updatedAt: string; // ISO 8601 date string
     publicURL?: string;
 }
+
+export type LinksQueryParams = {
+    page?: number;
+    limit?: number;
+    field?: LinkSortFields
+    order?: SortOrder
+}
+

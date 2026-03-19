@@ -34,7 +34,9 @@ export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
 };
 
 
-export const getAllLinks = async (params: {
+
+
+export const getAllLinks = async (params?: {
     page?: string,
     limit?: string
 },
@@ -71,4 +73,17 @@ export const getlinkById = async (id: string) => {
     });
 
     return res.data;
+}
+
+export const toggleLinkStatus = async (id: string) => {
+    const res = await axiosInstance.patch<Link>(`/api/links/${id}`)
+    return res.data
+}
+
+export async function bulkDeleteLinks(ids: string[]): Promise<void> {
+    await axiosInstance.delete(`api/links/bulk-delete`, {
+        data: {
+            ids
+        }
+    });
 }
