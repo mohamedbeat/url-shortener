@@ -3,13 +3,17 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Visit } from './visits.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 @Entity()
+@Index(['id', 'userId'])
 export class Link {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -49,6 +53,15 @@ export class Link {
 
   @OneToMany(() => Visit, (visit) => visit.link)
   visits: Visit[];
+
+  @Column()
+  userId: string;
+
+  @ManyToOne(() => User, (user) => user.links, {
+    onDelete: 'CASCADE', // When a link is deleted, its visits are also deleted
+  })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @Column({
     nullable: true

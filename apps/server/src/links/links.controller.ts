@@ -7,9 +7,6 @@ import {
   Param,
   Delete,
   Query,
-  DefaultValuePipe,
-  ParseIntPipe,
-  NotFoundException,
 } from '@nestjs/common';
 import { LinksService } from './links.service';
 import { CreateLinkDto } from './dto/create-link.dto';
@@ -18,21 +15,22 @@ import { PaginationDto } from '../common/dtos/paginationQuery.dto';
 import { FindAllLinksFiltersDto } from './dto/find-all-filter.dto';
 import { SortLinksDto } from './dto/sort-links-query.dto';
 import { IdsDto } from './dto/delete-by-ids.dto';
-
+import { User } from 'src/common/decorators/user-decorator';
 @Controller('api/links')
 export class LinksController {
   constructor(private readonly linksService: LinksService) { }
 
   @Post()
-  create(@Body() createLinkDto: CreateLinkDto) {
-    return this.linksService.create(createLinkDto);
+  create(@Body() createLinkDto: CreateLinkDto, @User('id') userId: string) {
+    return this.linksService.create(createLinkDto, userId);
   }
 
   @Get()
   findAll(
     @Query() pagination: PaginationDto,
     @Query() filter: FindAllLinksFiltersDto,
-    @Query() sort: SortLinksDto
+    @Query() sort: SortLinksDto,
+    @User('id') userId: string
   ) {
 
     if (pagination.limit && pagination.limit > 100) {
@@ -40,12 +38,12 @@ export class LinksController {
     }
 
 
-    return this.linksService.findAll(pagination.page, pagination.limit, filter, sort);
+    return this.linksService.findAll(userId, pagination.page, pagination.limit, filter, sort);
   }
 
   @Get("stats")
-  async getStats() {
-    return await this.linksService.getStats()
+  async getStats(@User('id') userId: string) {
+    return await this.linksService.getStats(userId)
   }
 
   @Get('checkSlug/:slug')
@@ -60,8 +58,8 @@ export class LinksController {
   }
 
   @Delete('bulk-delete')
-  async deleteByIds(@Body() body: IdsDto) {
-    return await this.linksService.removeByIds(body.ids)
+  async deleteByIds(@Body() body: IdsDto, @User('id') userId: string) {
+    return await this.linksService.removeByIds(body.ids, userId)
   }
 
   @Get(':id')
@@ -70,12 +68,16 @@ export class LinksController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLinkDto: UpdateLinkDto) {
-    return this.linksService.update(id, updateLinkDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateLinkDto: UpdateLinkDto,
+    @User('id') userId: string
+  ) {
+    return this.linksService.update(id, updateLinkDto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.linksService.remove(id);
+  remove(@Param('id') id: string, @User('id') userId: string) {
+    return this.linksService.remove(id, userId);
   }
 }

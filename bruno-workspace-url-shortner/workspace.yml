@@ -8,5 +8,7 @@ collections:
     path: "collections/links"
 
 specs:
+  - name: "idk"
+    path: "C:/Users/PROTECH_WD/Desktop/idk.yaml"
 
 docs: ''

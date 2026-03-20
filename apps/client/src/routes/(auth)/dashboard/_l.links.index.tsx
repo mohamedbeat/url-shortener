@@ -52,7 +52,7 @@ export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
   validateSearch: (search: Record<string, unknown>): LinksQueryParams => {
     return {
       page: Number(search.page) || 1,
-      limit: Number(search.limit) || 3,
+      limit: Number(search.limit) || 10,
       field: search.field as LinkSortFields || 'createdAt',
       order: search.order as SortOrder || 'DESC'
     };
@@ -240,9 +240,9 @@ function LinksPage() {
                       <TableRow key={link.id}>
                         <TableCell>
                           <div className="flex items-center space-x-3">
-                            <Avatar className="h-8 w-8">
-                              <AvatarImage src={link.publicURL} alt={link.title} />
-                              <AvatarFallback className="text-xs">
+                            <Avatar className="h-8 w-8 rounded-none">
+                              <AvatarImage src={link.publicURL} alt={link.title} className={"rounded-none"} />
+                              <AvatarFallback className="text-xs rounded-none">
                                 {link.title.slice(0, 2).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>

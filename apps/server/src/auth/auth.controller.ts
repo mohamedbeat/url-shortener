@@ -4,30 +4,29 @@ import { AuthGuard as PassPortAuthGuard } from '@nestjs/passport';
 import type { Response, Request } from 'express';
 import { User } from './entities/user.entity';
 import { EnvService } from 'src/config/env/env.service';
-import { AuthGuard } from './auth.guard';
 import { User as UserDecorator } from '../common/decorators/user-decorator'
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService, private readonly envService: EnvService) { }
 
 
-  @UseGuards(AuthGuard)
   @Get('me')
   async me(@UserDecorator('id') userId: string) {
-    console.log("here with id: ", userId)
     const user = await this.authService.getUserById(userId)
-    console.log("user", user)
     return this.authService.getSafeUserInfo(user)
   }
 
   @Get('google')
+  @Public()
   @UseGuards(PassPortAuthGuard('google'))
   async googleAuth(@Req() req) {
     // This is handled by Passport.js - it redirects the user to Google
   }
 
   @Get('google/callback')
+  @Public()
   @UseGuards(PassPortAuthGuard('google'))
   async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     // req.user is populated by our GoogleStrategy's validate() method
@@ -57,6 +56,7 @@ export class AuthController {
   }
 
   @Post('refreshTokens')
+  @Public()
   async refreshTokens(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const accessToken = req.cookies['accessToken']
     const refreshToken = req.cookies['refreshToken']

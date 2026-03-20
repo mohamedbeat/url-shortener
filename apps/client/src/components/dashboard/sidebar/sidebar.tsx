@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { SideBarFooter } from './SideBareFooter';
 import { SideBarThemeToggler } from './SideBarThemeToggler';
+import { useLocation } from '@tanstack/react-router'
 
 const mainNavigation = [
   {
@@ -126,6 +127,23 @@ export function AppSidebar({
 }: AppSidebarProps) {
   const { state } = useSidebar()
   const isCollapsed = state === 'collapsed'
+  const location = useLocation()
+
+  const normalizePathname = (path: string) => {
+    if (path !== '/' && path.endsWith('/')) return path.slice(0, -1)
+    return path
+  }
+
+  const pathname = normalizePathname(location.pathname)
+
+  const isNavItemActive = (itemUrl: string) => {
+    const normalizedItemUrl = normalizePathname(itemUrl)
+
+    // Avoid "Overview" being active on every dashboard sub-route.
+    if (normalizedItemUrl === '/dashboard') return pathname === normalizedItemUrl
+
+    return pathname === normalizedItemUrl || pathname.startsWith(`${normalizedItemUrl}/`)
+  }
 
   return (
     <Sidebar collapsible="icon" variant="sidebar">
@@ -165,7 +183,7 @@ export function AppSidebar({
                   <Link to={item.url} className="cursor-pointer">
                     <SidebarMenuButton
                       tooltip={item.description}
-                      isActive={window.location.pathname === item.url}
+                      isActive={isNavItemActive(item.url)}
                       className="cursor-pointer"
                     >
                       <item.icon />
@@ -205,7 +223,7 @@ export function AppSidebar({
                         <SidebarMenuButton
                           className='cursor-pointer'
                           tooltip={item.description}
-                          isActive={window.location.pathname === item.url}
+                          isActive={isNavItemActive(item.url)}
                         >
                           <item.icon />
                           <span>{item.title}</span>
@@ -237,7 +255,7 @@ export function AppSidebar({
                     <SidebarMenuButton
                       className='cursor-pointer'
                       tooltip={item.description}
-                      isActive={window.location.pathname === item.url}
+                      isActive={isNavItemActive(item.url)}
                     >
                       <item.icon />
                       <span>{item.title}</span>

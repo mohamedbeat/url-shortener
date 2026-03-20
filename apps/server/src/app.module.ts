@@ -29,10 +29,15 @@ import { AuthModule } from './auth/auth.module';
     LinksModule,
     typeOrmConfig,
   TypeOrmModule.forFeature([Link, Visit]),
-  AuthModule
+    AuthModule,
+
+
+
   ],
   controllers: [AppController],
-  providers: [AppService, TrackerService],
+  providers: [AppService,
+    TrackerService,
+  ],
 })
 export class AppModule {
 }

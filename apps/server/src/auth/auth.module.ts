@@ -9,6 +9,8 @@ import { GoogleStrategy } from './google.strategy';
 import { Session } from './entities/session.entity';
 import { UserService } from './user.service';
 import { SessionService } from './session.service';
+import { AuthGuard } from './auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Session]), JwtModule.registerAsync({
@@ -22,7 +24,17 @@ import { SessionService } from './session.service';
     })
   })],
   controllers: [AuthController],
-  providers: [AuthService, UserService, SessionService, GoogleStrategy],
-  exports: [AuthService, UserService, SessionService]
+  providers: [
+    AuthService,
+    UserService,
+    SessionService,
+    GoogleStrategy,
+    AuthGuard,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
+  exports: [AuthService, UserService, SessionService, AuthGuard]
 })
 export class AuthModule { }

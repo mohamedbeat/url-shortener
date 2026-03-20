@@ -1,6 +1,7 @@
 // apps/server/src/auth/entities/user.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Session } from './session.entity';
+import { Link } from 'src/links/entities/link.entity';
 
 @Entity('users')
 export class User {
@@ -24,6 +25,9 @@ export class User {
 
     @OneToMany(() => Session, (session) => session.user)
     sessions: Session[];
+
+    @OneToMany(() => Link, (link) => link.user)
+    links: Link[];
 
     @CreateDateColumn()
     createdAt: Date;

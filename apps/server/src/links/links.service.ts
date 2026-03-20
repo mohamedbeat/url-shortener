@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,8 +17,8 @@ export class LinksService {
     private s3Serice: S3Service
   ) { }
 
-  async create(createLinkDto: CreateLinkDto) {
-    const urlExist = await this.exists(createLinkDto.url)
+  async create(createLinkDto: CreateLinkDto, userId: string) {
+    const urlExist = await this.exists(createLinkDto.url, userId)
     if (!!urlExist) {
       throw new ConflictException("the given URL already exists")
     }
@@ -59,15 +59,16 @@ export class LinksService {
     const created = this.linkRepo.create({
       ...createLinkDto,
       shortHash: hash,
+      userId,
       publicURL
     })
     return await this.linkRepo.save(created);
   }
 
-  async exists(url: string) {
+  async exists(url: string, userId: string) {
     const found = await this.linkRepo.findOne({
       where: [
-        { url: url },
+        { url: url, userId: userId },
       ]
     })
 
@@ -75,6 +76,8 @@ export class LinksService {
   }
 
   async findAll(
+
+    userId: string,
     page: number = 1,
     limit: number = 10,
     filters?: {
@@ -86,10 +89,11 @@ export class LinksService {
     sort?: {
       field?: LinkSortFields
       order?: SortOrder
-    }
+    },
   ): Promise<Pagination<Link>> {
     const queryBuilder = this.linkRepo.createQueryBuilder('link');
 
+    queryBuilder.andWhere('link.userId = :userId', { userId });
     // Apply filters if provided
     if (filters?.title) {
       queryBuilder.andWhere('link.title LIKE :title', { title: `%${filters.title}%` });
@@ -163,9 +167,12 @@ export class LinksService {
     return found
   }
 
-  async update(id: string, updateLinkDto: UpdateLinkDto) {
+  async update(id: string, updateLinkDto: UpdateLinkDto, userId: string) {
 
-    await this.findById(id)
+    const found = await this.findById(id)
+    if (found.userId !== userId) {
+      throw new ForbiddenException()
+    }
 
     if (!!updateLinkDto.customSlug) {
       const slugExist = await this.linkRepo.findOne({
@@ -189,9 +196,12 @@ export class LinksService {
     })
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
 
-    await this.findById(id)
+    const found = await this.findById(id)
+    if (found.userId !== userId) {
+      throw new ForbiddenException()
+    }
 
     await this.linkRepo.delete({
       id
@@ -202,9 +212,10 @@ export class LinksService {
     }
   }
 
-  async removeByIds(ids: string[]) {
+  async removeByIds(ids: string[], userId: string) {
     await this.linkRepo.delete({
-      id: In(ids)
+      id: In(ids),
+      userId: userId
     })
   }
 
@@ -254,12 +265,16 @@ export class LinksService {
   }
 
 
-  async getStats() {
+  async getStats(userId: string) {
     // throw new InternalServerErrorException()
-    const totalLinks = await this.linkRepo.count()
+    const totalLinks = await this.linkRepo.countBy({
+      userId
+    })
 
     //i want to calcute total clicks 
-    const totalClicks = await this.linkRepo.sum('totalClicks')
+    const totalClicks = await this.linkRepo.sum('totalClicks', {
+      userId
+    })
 
     return {
       totalLinks,
