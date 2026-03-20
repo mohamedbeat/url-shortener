@@ -13,6 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Link } from './links/entities/link.entity';
 import { TrackerService } from './tracker.service';
 import { Visit } from './links/entities/visits.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -27,7 +28,8 @@ import { Visit } from './links/entities/visits.entity';
     EnvModule,
     LinksModule,
     typeOrmConfig,
-  TypeOrmModule.forFeature([Link, Visit])
+  TypeOrmModule.forFeature([Link, Visit]),
+  AuthModule
   ],
   controllers: [AppController],
   providers: [AppService, TrackerService],

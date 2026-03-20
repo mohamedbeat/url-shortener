@@ -19,6 +19,15 @@ export class EnvService {
     };
   }
 
+  get auth() {
+    return {
+      jwtSecret: this.configService.getOrThrow<string>('auth.jwtSecret'),
+      jwtExpiresIn: this.configService.getOrThrow<number>('auth.jwtExpiresIn'),
+      googleClientId: this.configService.getOrThrow<string>('auth.googleClientId'),
+      googleClientSecret: this.configService.getOrThrow<string>('auth.googleClientSecret'),
+    }
+  }
+
   // get jwt() {
   //   return {
   //     secret: this.configService.get<string>('jwt.secret'),

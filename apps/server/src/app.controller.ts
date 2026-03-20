@@ -3,12 +3,14 @@ import { AppService } from './app.service';
 import { type Response, type Request } from "express"
 import { TrackerService } from './tracker.service';
 import { EnvService } from './config/env/env.service';
+import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService,
     private readonly trackerService: TrackerService,
-    private envService: EnvService
+    private readonly envService: EnvService,
+    private readonly authService: AuthService
   ) { }
 
   @Get(":hash")
@@ -19,7 +21,7 @@ export class AppController {
   ) {
 
 
-    const info = await this.trackerService.getDeviceInfo(req)
+    const info = await this.authService.getDeviceInfo(req)
 
     console.log("Device Info:", info)
 

@@ -2,6 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import { EnvService } from './config/env/env.service';
+import cookieParser from 'cookie-parser';
+
+// import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -12,6 +15,8 @@ async function bootstrap() {
   const logger = new ConsoleLogger({
     prefix: envService.app.name,
   })
+
+  app.use(cookieParser())
   app.useLogger(logger)
 
   app.useGlobalPipes(new ValidationPipe({

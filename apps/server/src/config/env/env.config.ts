@@ -13,10 +13,12 @@ export const envConfig = () => ({
     name: process.env.APP_NAME,
     environment: process.env.NODE_ENV || 'development',
   },
-  // jwt: {
-  //   secret: process.env.JWT_SECRET,
-  //   expiresIn: process.env.JWT_EXPIRES_IN || '3600s',
-  // },
+  auth: {
+    jwtSecret: process.env.JWT_SECRET,
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN || '3600s',
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  },
 });
 
 export const envValidatinSchema = Joi.object({
@@ -26,6 +28,10 @@ export const envValidatinSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid("development", "production", "test")
     .default("development"),
+  GOOGLE_CLIENT_ID: Joi.string().required(),
+  GOOGLE_CLIENT_SECRET: Joi.string().required(),
+  JWT_SECRET: Joi.string().required(),
+  JWT_DURATION: Joi.number().required(),
 })
 
 // export const envValidationSchema = Joi.object({
