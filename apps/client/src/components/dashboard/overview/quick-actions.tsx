@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router'
 import {
     Calendar, QrCode, Zap
 } from 'lucide-react'
+import { CreateBulkLinkDialog } from '../create-bulk-link-dialog '
 
 
 export function QuickActions() {
@@ -17,10 +18,13 @@ export function QuickActions() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button variant="outline" className="w-full cursor-pointer" >
-                        <Zap className="mr-2 h-4 w-4" />
-                        Bulk shorten
-                    </Button>
+                    <CreateBulkLinkDialog>
+                        <Button variant="outline" className="w-full cursor-pointer" >
+                            <Zap className="mr-2 h-4 w-4" />
+                            Bulk shorten
+                        </Button>
+                    </CreateBulkLinkDialog>
+
                 </CardContent>
             </Card>
             <Card>

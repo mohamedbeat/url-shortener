@@ -20,13 +20,29 @@ export const createLinkSchema = z.object({
 });
 
 export type CreateLinkInput = z.infer<typeof createLinkSchema>;
+export const createBulkLinkSchema = z.object({
+    url: z
+        .url('Please enter a valid URL')
+        .min(1, 'URL is required'),
+});
+
+export type CreateBulkLinkInput = z.infer<typeof createBulkLinkSchema>;
+
 
 
 export const createLink = async (data: CreateLinkInput): Promise<Link> => {
-    console.log("creating")
     const response = await axiosInstance.post<Link>('api/links', data);
     return response.data;
 };
+
+export const createBulkLink = async (data: CreateBulkLinkInput[]): Promise<Link[]> => {
+    const response = await axiosInstance.post<Link[]>('api/links/bulk', {
+        links: data
+    });
+    return response.data;
+};
+
+
 
 export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
     const response = await axiosInstance.get<{ available: boolean }>(`api/links/checkSlug/${slug}`);

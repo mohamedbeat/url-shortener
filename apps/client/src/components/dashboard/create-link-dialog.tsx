@@ -40,12 +40,7 @@ export function CreateLinkDialog({ onSuccess, children }: CreateLinkDialogProps)
                 setServerErrors(err.message as string[])
                 return
             }
-            if (err.status === 401) {
-                navigate({
-                    to: "/"
-                })
-                return
-            }
+
             setServerErrors([err.message as string])
 
         },

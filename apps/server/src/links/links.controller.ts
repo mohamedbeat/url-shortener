@@ -16,6 +16,7 @@ import { FindAllLinksFiltersDto } from './dto/find-all-filter.dto';
 import { SortLinksDto } from './dto/sort-links-query.dto';
 import { IdsDto } from './dto/delete-by-ids.dto';
 import { User } from 'src/common/decorators/user-decorator';
+import { CreateBulkLinksDto } from './dto/create-bulk-link.dto';
 @Controller('api/links')
 export class LinksController {
   constructor(private readonly linksService: LinksService) { }
@@ -23,6 +24,11 @@ export class LinksController {
   @Post()
   create(@Body() createLinkDto: CreateLinkDto, @User('id') userId: string) {
     return this.linksService.create(createLinkDto, userId);
+  }
+
+  @Post('bulk')
+  createBulk(@Body() createBulkLinkDto: CreateBulkLinksDto, @User('id') userId: string) {
+    return this.linksService.createBulk(createBulkLinkDto, userId);
   }
 
   @Get()

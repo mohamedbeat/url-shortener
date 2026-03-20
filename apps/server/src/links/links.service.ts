@@ -8,6 +8,7 @@ import { nanoid } from 'nanoid';
 import { LinkSortFields, SortOrder, type Pagination } from "@packages/shared/types"
 import { S3Service } from '../common/s3.service';
 import { FindAllLinksFiltersDto } from './dto/find-all-filter.dto';
+import { CreateBulkLinksDto } from './dto/create-bulk-link.dto';
 
 @Injectable()
 export class LinksService {
@@ -66,6 +67,34 @@ export class LinksService {
     return await this.linkRepo.save(created);
   }
 
+  async createBulk(data: CreateBulkLinksDto, userId: string) {
+    const links = data.links.map((l) => l.url)
+    const found = await this.linkRepo.find({
+      where: {
+        url: In(links),
+        userId: userId
+      }
+    })
+
+    if (found.length > 0) {
+      throw new ConflictException({
+        message: 'some urls already exist',
+        urls: found
+      })
+    }
+
+    let created = await this.linkRepo.create(data.links)
+    created = await Promise.all(created.map(async l => {
+      const hash = await this.generateUniqueHash()
+      l.shortHash = hash
+      l.userId = userId
+      return l
+    }))
+
+    await this.linkRepo.save(created)
+    return created
+  }
+
   async exists(url: string, userId: string) {
     const found = await this.linkRepo.findOne({
       where: [
@@ -88,7 +117,6 @@ export class LinksService {
     },
   ): Promise<Pagination<Link>> {
 
-    console.log(filters)
     const queryBuilder = this.linkRepo.createQueryBuilder('link');
 
     queryBuilder.andWhere('link.userId = :userId', { userId });

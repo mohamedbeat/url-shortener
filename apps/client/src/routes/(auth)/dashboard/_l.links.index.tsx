@@ -17,6 +17,7 @@ import {
   EyeOff,
   MoreVertical,
   X,
+  SquareStack,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -49,6 +50,7 @@ import { DeleteLinkDialog } from '@/components/dashboard/delete-link-dialog';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CreateBulkLinkDialog } from '@/components/dashboard/create-bulk-link-dialog ';
 
 export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
   component: LinksPage,
@@ -193,13 +195,22 @@ function LinksPage() {
   return (
     <div className="container mx-auto py-10">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Your Links</h1>
-        <CreateLinkDialog />
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold mb-4 ">Your Links</h1>
+        <div className='space-x-2 flex '>
+          <CreateLinkDialog />
+          <CreateBulkLinkDialog >
+            <Button size="lg">
+              <SquareStack className="mr-2 h-5 w-5" />
+              Create multiple
+            </Button>
+
+          </CreateBulkLinkDialog>
+        </div>
       </div>
 
       {/* Links Table */}
-      <Card>
+      <Card className='w-[21rem] sm:w-auto'>
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             {/* Search */}
