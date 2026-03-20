@@ -116,6 +116,7 @@ export function DeleteLinkDialog({ id, open, onOpenChange }: DeleteLinkDialogPro
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={deleteMutation.isPending}
+            className={"cursor-pointer"}
           >
             Cancel
           </Button>
@@ -127,6 +128,7 @@ export function DeleteLinkDialog({ id, open, onOpenChange }: DeleteLinkDialogPro
               if (!id) return;
               deleteMutation.mutate(id);
             }}
+            className={"cursor-pointer"}
           >
             {deleteMutation.isPending ? (
               <>

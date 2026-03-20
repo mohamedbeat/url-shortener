@@ -18,8 +18,8 @@ export class Link {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  title: string;
+  @Column({ nullable: true })
+  title?: string;
 
   @Column({
     unique: true,

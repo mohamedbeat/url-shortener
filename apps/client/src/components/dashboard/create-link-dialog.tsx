@@ -58,10 +58,13 @@ export function CreateLinkDialog({ onSuccess, children }: CreateLinkDialogProps)
             customSlug: '',
         } as CreateLinkInput,
         onSubmit: async ({ value }) => {
-            if (value.customSlug?.length === 0) {
-                value.customSlug = undefined
-            }
-            await createLinkMutation.mutateAsync(value);
+            const submitValue = {
+                ...value,
+                title: value.title === '' ? undefined : value.title,
+                customSlug: value.customSlug?.length === 0 ? undefined : value.customSlug,
+            };
+
+            await createLinkMutation.mutateAsync(submitValue);
         },
     });
 
@@ -214,22 +217,13 @@ export function CreateLinkDialog({ onSuccess, children }: CreateLinkDialogProps)
                                     )
                                 })
                             }
-                            {/* <div className="flex items-center gap-1">
-                                <span>•</span>
-                                <span>{error?.message}</span>
-                            </div> */}
+
                         </div>
                     </>
                     )
 
                     }
-                    {/* {createLinkMutation.isError && (
-                        <Alert variant="destructive">
-                            <AlertDescription>
-                                {createLinkMutation.error?.message || 'An error occurred while creating the link'}
-                            </AlertDescription>
-                        </Alert>
-                    )} */}
+
 
                     <DialogFooter>
                         <Button

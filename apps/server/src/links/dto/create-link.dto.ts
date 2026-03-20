@@ -8,11 +8,11 @@ import {
 } from 'class-validator';
 
 export class CreateLinkDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MinLength(3, { message: 'Title must be at least 3 characters long' })
   @MaxLength(255, { message: 'Title cannot exceed 255 characters' })
-  title: string;
+  title?: string;
 
   @IsUrl({}, { message: 'Please provide a valid URL' })
   @IsNotEmpty()

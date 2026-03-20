@@ -222,7 +222,7 @@ export function RecentLinks() {
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="font-medium">{link.title}</div>
+                                    <div className="font-medium">{link?.title}</div>
                                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                         <span>http://localhost:3000/{link.customSlug ? link.customSlug : link.shortHash}</span>
                                         <Button variant="ghost" size="icon" className="h-5 w-5">

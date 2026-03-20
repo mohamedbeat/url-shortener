@@ -88,6 +88,7 @@ export function Header() {
                     e.preventDefault()
                     logout()
                   }}
+                  variant='destructive'
                 >
                   <LogOut /> Log out
                 </DropdownMenuItem>

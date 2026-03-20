@@ -211,14 +211,16 @@ function LinksPage() {
             />
 
             {/* Status */}
-            <Select value={search.status} onValueChange={(value) =>
+            <Select value={search.status} onValueChange={(value) => {
               navigate({
                 search: {
                   ...search,
                   status: value as status,
                   page: 1,
                 },
-              })}>
+              })
+            }
+            }>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
@@ -230,7 +232,8 @@ function LinksPage() {
             </Select>
 
             {/* Reset */}
-            <Button variant="outline" onClick={() =>
+            <Button variant="outline" onClick={() => {
+              setSearchInput('')
               navigate({
                 search: {
                   page: 1,
@@ -240,7 +243,9 @@ function LinksPage() {
                   search: '',
                   status: 'all',
                 },
-              })}>
+              })
+            }
+            } className={"cursor-pointer"}>
               <X className="w-4 h-4 mr-2" />
               Reset
             </Button>
@@ -307,7 +312,7 @@ function LinksPage() {
                             <Avatar className="h-8 w-8 rounded-none">
                               <AvatarImage src={link.publicURL} alt={link.title} className={"rounded-none"} />
                               <AvatarFallback className="text-xs rounded-none">
-                                {link.title.slice(0, 2).toUpperCase()}
+                                {link.title?.slice(0, 2).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                             <div>

@@ -5,9 +5,9 @@ import { type LinkSortFields, type Pagination, type SortOrder } from "@packages/
 import { z } from 'zod';
 
 export const createLinkSchema = z.object({
-    title: z.string()
-        .min(3, 'Title must be at least 3 characters')
-        .max(100, 'Title must be less than 100 characters'),
+    title: z.string().optional()
+        .transform(val => val === '' ? undefined : val) // Transform empty string to undefined
+        .pipe(z.string().min(3, 'Title must be at least 3 characters').max(100, 'Title must be less than 100 characters').optional()), // Ensure proper optional type,
     url: z
         .url('Please enter a valid URL')
         .min(1, 'URL is required'),
