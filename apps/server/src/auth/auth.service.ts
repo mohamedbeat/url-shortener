@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -45,6 +45,27 @@ export class AuthService {
 
         private jwtService: JwtService,
     ) { }
+
+    async getUserById(id: string) {
+        const user = await this.userRepository.findOneBy({
+            id,
+        })
+        if (!user) {
+            throw new NotFoundException(`user with id ${id} not found`)
+        }
+        return user
+    }
+
+    getSafeUserInfo(user: User): Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'picture' | 'createdAt'> {
+        return {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            picture: user.picture,
+            createdAt: user.createdAt
+        }
+    }
 
     async validateGoogleUser(details: createUser) {
         let user = await this.userRepository.findOneBy({ email: details.email });

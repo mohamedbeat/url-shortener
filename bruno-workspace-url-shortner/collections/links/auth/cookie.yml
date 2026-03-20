@@ -1,0 +1,22 @@
+info:
+  name: cookie
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{api_url}}/api/auth/refreshTokens"
+  body:
+    type: json
+    data: |-
+      {
+        "a":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUxMTdjZWU3LTVlZjAtNDYwNS1hNmQwLWMzOGVkMGI5OGFkMyIsImlhdCI6MTc3Mzk3Mjc0OSwiZXhwIjoxNzczOTc2MzQ5fQ.TPWPY2aw-u9dKv8wfuqSrIsr6CKstbfDfrHiSFXrWwQ",
+        "r":"1dc598b157e0c03f880f9b3b2f6658ed0ccaaf6a3f7b93befb7e19381fc11bb8d483d6e995626e59"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

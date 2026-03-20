@@ -8,15 +8,18 @@ import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: true
+    cors: {
+      origin: true,
+      credentials: true,
+    },
   });
-
+  app.use(cookieParser())
   const envService = app.get(EnvService)
   const logger = new ConsoleLogger({
     prefix: envService.app.name,
   })
 
-  app.use(cookieParser())
+
   app.useLogger(logger)
 
   app.useGlobalPipes(new ValidationPipe({

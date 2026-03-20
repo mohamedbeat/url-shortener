@@ -1,31 +1,44 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard as PassPortAuthGuard } from '@nestjs/passport';
 import type { Response, Request } from 'express';
 import { User } from './entities/user.entity';
 import { EnvService } from 'src/config/env/env.service';
+import { AuthGuard } from './auth.guard';
+import { User as UserDecorator } from '../common/decorators/user-decorator'
 
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService, private readonly envService: EnvService) { }
 
 
+  @UseGuards(AuthGuard)
+  @Get('me')
+  async me(@UserDecorator('id') userId: string) {
+    console.log("here with id: ", userId)
+    const user = await this.authService.getUserById(userId)
+    console.log("user", user)
+    return this.authService.getSafeUserInfo(user)
+  }
 
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(PassPortAuthGuard('google'))
   async googleAuth(@Req() req) {
     // This is handled by Passport.js - it redirects the user to Google
   }
 
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(PassPortAuthGuard('google'))
   async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     // req.user is populated by our GoogleStrategy's validate() method
-    console.log(req.user)
     const tokens = await this.authService.login(req.user as User, req);
 
-
-    const frontendUrl = `http://localhost:5173/login-success?token=${tokens.accessToken}`;
+    // IMPORTANT:
+    // Cookies are sent based on the browser's origin (frontend host) vs the backend host.
+    // Hardcoding localhost here can break cookie sending if your frontend/API run on different hosts.
+    const frontendBaseUrl = (process.env.FRONTEND_URL ?? 'http://localhost:3001').replace(/\/$/, '')
+    console.log("frontend base url", frontendBaseUrl)
+    const frontendUrl = `${frontendBaseUrl}/login/success`;
 
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
@@ -39,14 +52,15 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: 3600000 * 24, // 1 hour
     })
-    // res.redirect(frontendUrl)
-    return tokens
+    return res.redirect(frontendUrl)
+    // return 
   }
 
   @Post('refreshTokens')
   async refreshTokens(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const accessToken = req.cookies['accessToken']
     const refreshToken = req.cookies['refreshToken']
+    console.log(accessToken)
     return await this.authService.refreshTokens(refreshToken, accessToken)
   }
 }

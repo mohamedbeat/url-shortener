@@ -13,6 +13,9 @@ function RouteComponent() {
       <Link to="/dashboard" className="[&.active]:font-bold">
         dashboard
       </Link>
+      <Link to="/login" className="[&.active]:font-bold">
+        login
+      </Link>
     </div>
     <hr />
 

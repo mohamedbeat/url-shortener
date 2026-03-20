@@ -1,12 +1,14 @@
 // lib/axios.ts
 import axios, { isAxiosError } from 'axios';
 
-export const BASE_URL = import.meta.env.API_URL || 'http://192.168.100.37:3000/'
+export const BASE_URL = import.meta.env.API_URL || 'http://localhost:3000/'
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
+    // Required when the backend sets httpOnly cookies and the frontend makes cross-origin XHR/fetch calls.
+    withCredentials: true,
 });
 
 // Add request interceptor for auth if needed
