@@ -60,7 +60,27 @@ export class AuthController {
   async refreshTokens(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const accessToken = req.cookies['accessToken']
     const refreshToken = req.cookies['refreshToken']
-    console.log(accessToken)
     return await this.authService.refreshTokens(refreshToken, accessToken)
+  }
+
+
+  @Post('logout')
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const accessToken = req.cookies['accessToken'] as string | undefined
+    const refreshToken = req.cookies['refreshToken'] as string | undefined
+
+    await this.authService.logout(accessToken, refreshToken)
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: this.envService.isProduction(),
+      sameSite: 'lax' as const,
+      path: '/',
+    }
+
+    res.clearCookie('accessToken', cookieOptions)
+    res.clearCookie('refreshToken', cookieOptions)
+
+    return res.status(200).json({ success: true })
   }
 }

@@ -1,7 +1,7 @@
 // components/dashboard/header.tsx
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Menu, Search, Bell } from 'lucide-react'
+import { Menu, Search, Bell, User, Bolt, CreditCard, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,9 +15,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { useAuth } from '@/hooks/useAuth'
 
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const { logout, user } = useAuth()
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
@@ -66,21 +68,29 @@ export function Header() {
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <DropdownMenuTrigger
               >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="/avatars/01.png" alt="User" />
+                <Avatar className="h-8 w-8 cursor-pointer">
+                  <AvatarImage src={user?.picture} alt="User" />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
             </Button>
             <DropdownMenuContent align="end">
               <DropdownMenuGroup>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                {/* <DropdownMenuLabel> <User /> My Account</DropdownMenuLabel> */}
+                {/* <DropdownMenuSeparator /> */}
+                <DropdownMenuItem><User /> Profile</DropdownMenuItem>
+                <DropdownMenuItem><Bolt /> Settings</DropdownMenuItem>
+                <DropdownMenuItem><CreditCard /> Billing</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    logout()
+                  }}
+                >
+                  <LogOut /> Log out
+                </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

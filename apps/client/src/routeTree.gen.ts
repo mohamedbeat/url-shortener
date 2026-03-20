@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as noauthLRouteImport } from './routes/(noauth)/_l'
+import { Route as noauthNotfoundIndexRouteImport } from './routes/(noauth)/notfound.index'
 import { Route as noauthLoginIndexRouteImport } from './routes/(noauth)/login.index'
 import { Route as noauthLIndexRouteImport } from './routes/(noauth)/_l.index'
 import { Route as authDashboardLRouteImport } from './routes/(auth)/dashboard/_l'
@@ -19,6 +20,11 @@ import { Route as authDashboardLLinksIndexRouteImport } from './routes/(auth)/da
 
 const noauthLRoute = noauthLRouteImport.update({
   id: '/(noauth)/_l',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const noauthNotfoundIndexRoute = noauthNotfoundIndexRouteImport.update({
+  id: '/(noauth)/notfound/',
+  path: '/notfound/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const noauthLoginIndexRoute = noauthLoginIndexRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof authDashboardLRouteWithChildren
   '/': typeof noauthLIndexRoute
   '/login/': typeof noauthLoginIndexRoute
+  '/notfound/': typeof noauthNotfoundIndexRoute
   '/dashboard/': typeof authDashboardLIndexRoute
   '/login/success/': typeof noauthLoginSuccessIndexRoute
   '/dashboard/links/': typeof authDashboardLLinksIndexRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof noauthLIndexRoute
   '/login': typeof noauthLoginIndexRoute
+  '/notfound': typeof noauthNotfoundIndexRoute
   '/dashboard': typeof authDashboardLIndexRoute
   '/login/success': typeof noauthLoginSuccessIndexRoute
   '/dashboard/links': typeof authDashboardLLinksIndexRoute
@@ -74,6 +82,7 @@ export interface FileRoutesById {
   '/(auth)/dashboard/_l': typeof authDashboardLRouteWithChildren
   '/(noauth)/_l/': typeof noauthLIndexRoute
   '/(noauth)/login/': typeof noauthLoginIndexRoute
+  '/(noauth)/notfound/': typeof noauthNotfoundIndexRoute
   '/(auth)/dashboard/_l/': typeof authDashboardLIndexRoute
   '/(noauth)/login/success/': typeof noauthLoginSuccessIndexRoute
   '/(auth)/dashboard/_l/links/': typeof authDashboardLLinksIndexRoute
@@ -84,17 +93,25 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/'
     | '/login/'
+    | '/notfound/'
     | '/dashboard/'
     | '/login/success/'
     | '/dashboard/links/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/login/success' | '/dashboard/links'
+  to:
+    | '/'
+    | '/login'
+    | '/notfound'
+    | '/dashboard'
+    | '/login/success'
+    | '/dashboard/links'
   id:
     | '__root__'
     | '/(noauth)/_l'
     | '/(auth)/dashboard/_l'
     | '/(noauth)/_l/'
     | '/(noauth)/login/'
+    | '/(noauth)/notfound/'
     | '/(auth)/dashboard/_l/'
     | '/(noauth)/login/success/'
     | '/(auth)/dashboard/_l/links/'
@@ -104,6 +121,7 @@ export interface RootRouteChildren {
   noauthLRoute: typeof noauthLRouteWithChildren
   authDashboardLRoute: typeof authDashboardLRouteWithChildren
   noauthLoginIndexRoute: typeof noauthLoginIndexRoute
+  noauthNotfoundIndexRoute: typeof noauthNotfoundIndexRoute
   noauthLoginSuccessIndexRoute: typeof noauthLoginSuccessIndexRoute
 }
 
@@ -114,6 +132,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof noauthLRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(noauth)/notfound/': {
+      id: '/(noauth)/notfound/'
+      path: '/notfound'
+      fullPath: '/notfound/'
+      preLoaderRoute: typeof noauthNotfoundIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(noauth)/login/': {
@@ -190,6 +215,7 @@ const rootRouteChildren: RootRouteChildren = {
   noauthLRoute: noauthLRouteWithChildren,
   authDashboardLRoute: authDashboardLRouteWithChildren,
   noauthLoginIndexRoute: noauthLoginIndexRoute,
+  noauthNotfoundIndexRoute: noauthNotfoundIndexRoute,
   noauthLoginSuccessIndexRoute: noauthLoginSuccessIndexRoute,
 }
 export const routeTree = rootRouteImport

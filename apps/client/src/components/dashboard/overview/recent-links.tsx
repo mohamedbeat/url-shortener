@@ -252,13 +252,11 @@ export function RecentLinks() {
                                 <TableCell className="text-right">
                                     <DropdownMenu>
                                         <DropdownMenuGroup>
-
-                                            <Button variant="ghost" size="icon" className={"cursor-pointer"}>
-                                                <DropdownMenuTrigger>
+                                            <DropdownMenuTrigger>
+                                                <Button variant="ghost" size="icon" className={"cursor-pointer"}>
                                                     <MoreHorizontal className="h-4 w-4" />
-                                                </DropdownMenuTrigger>
-                                            </Button>
-
+                                                </Button>
+                                            </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                 <a target="_blank" href={`${BASE_URL}${link.customSlug ? link.customSlug : link.shortHash}`} >

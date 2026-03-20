@@ -36,7 +36,10 @@ export class AppController {
 
     const link = await this.appService.getLink(hash);
     if (!link || !link.isActive) {
-      throw new NotFoundException(`Link not found.`)
+      // throw new NotFoundException(`Link not found.`)
+      const frontEndUrl = `http://localhost:3001/notfound`
+      return res.redirect(HttpStatus.TEMPORARY_REDIRECT, frontEndUrl)
+
     }
 
     await this.trackerService.trackLinkVisit(link.id, info)

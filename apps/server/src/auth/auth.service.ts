@@ -135,6 +135,22 @@ export class AuthService {
         }
     }
 
+    async logout(rawAccessToken?: string, rawRefreshToken?: string) {
+        // Invalidate the current refresh-token session (if we can identify it).
+        if (!rawAccessToken || !rawRefreshToken) return;
+
+        const result = await this.verifyTokenIgnoringExpiry(rawAccessToken);
+        if (!result.isValid || !result.payload) return;
+
+        const userId = (result.payload as any)?.id as string | undefined;
+        if (!userId) return;
+
+        const session = await this.getSession(userId, rawRefreshToken);
+        if (!session) return;
+
+        await this.sessionService.deleteSessionById(session.id);
+    }
+
     async getDeviceInfo(req: Request): Promise<DeviceInfo | undefined> {
         const userAgent = req.headers['user-agent'];
         const referer = req.headers.referer;

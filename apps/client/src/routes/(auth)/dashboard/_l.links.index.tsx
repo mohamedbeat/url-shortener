@@ -275,11 +275,11 @@ function LinksPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                              <DropdownMenuTrigger >
+                            <DropdownMenuTrigger >
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 cursor-pointer">
                                 <MoreVertical className="h-4 w-4" />
-                              </DropdownMenuTrigger>
-                            </Button>
+                              </Button>
+                            </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">
                               {/* Copy Options */}
                               <DropdownMenuItem
