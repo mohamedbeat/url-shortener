@@ -12,14 +12,36 @@ const RootDocument = () => {
   const location = useLocation()
 
   useEffect(() => {
-    if (!isLoading) {
-      const publicRoutes = ['/login', '/']
-      const isPublicRoute =
-        publicRoutes.includes(location.pathname) || location.pathname.startsWith('/login/success')
+    if (isLoading) return
 
-      if (!isAuthenticated && !isPublicRoute) {
-        navigate({ to: '/login' })
-      }
+    const normalizePathname = (path: string) => {
+      if (path !== '/' && path.endsWith('/')) return path.slice(0, -1)
+      return path
+    }
+
+    const pathname = normalizePathname(location.pathname)
+
+    const isLoginRoute =
+      pathname === '/login' ||
+      pathname.startsWith('/login/success') ||
+      // Backwards-compatible alias if you ever use this path name.
+      pathname.startsWith('/logic/success')
+
+    const isPublicRouteForUnauthenticated =
+      pathname === '/' ||
+      pathname === '/login' ||
+      pathname.startsWith('/login/success') ||
+      pathname.startsWith('/logic/success')
+
+    // Unauthenticated users can only access public routes; everything else goes to /login.
+    if (!isAuthenticated && !isPublicRouteForUnauthenticated) {
+      navigate({ to: '/login', replace: true })
+      return
+    }
+
+    // Authenticated users shouldn't see /login or /login/success; send them to the dashboard.
+    if (isAuthenticated && isLoginRoute) {
+      navigate({ to: '/dashboard', replace: true })
     }
   }, [isAuthenticated, isLoading, location.pathname, navigate])
 

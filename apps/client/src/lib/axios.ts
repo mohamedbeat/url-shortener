@@ -1,4 +1,3 @@
-// lib/axios.ts
 import axios, { isAxiosError } from 'axios';
 
 export const BASE_URL = import.meta.env.API_URL || 'http://localhost:3000/'
@@ -10,6 +9,25 @@ const axiosInstance = axios.create({
     // Required when the backend sets httpOnly cookies and the frontend makes cross-origin XHR/fetch calls.
     withCredentials: true,
 });
+
+// Track refresh state to prevent multiple refresh requests
+let isRefreshing = false;
+let failedQueue: Array<{
+    resolve: (value: unknown) => void;
+    reject: (reason?: unknown) => void;
+}> = [];
+
+const processQueue = (error: Error | null = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(null);
+        }
+    });
+
+    failedQueue = [];
+};
 
 // Add request interceptor for auth if needed
 axiosInstance.interceptors.request.use(
@@ -24,6 +42,86 @@ axiosInstance.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+// Response interceptor for handling 401 errors and token refresh
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+
+        // If error is not 401 or request already retried, reject
+        if (!isAxiosError(error) || error.response?.status !== 401 || originalRequest._retry) {
+            return Promise.reject(error);
+        }
+
+        // Don't attempt refresh for auth endpoints (except refresh endpoint)
+        const isAuthEndpoint = originalRequest.url?.includes('/auth/') &&
+            !originalRequest.url?.includes('/auth/refresh');
+        if (isAuthEndpoint) {
+            // Clear auth and redirect to login
+            handleAuthFailure();
+            return Promise.reject(error);
+        }
+
+        // If already refreshing, queue this request
+        if (isRefreshing) {
+            return new Promise((resolve, reject) => {
+                failedQueue.push({ resolve, reject });
+            })
+                .then(() => {
+                    return axiosInstance(originalRequest);
+                })
+                .catch(err => {
+                    return Promise.reject(err);
+                });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+            // Attempt to refresh token
+            await axiosInstance.post('/auth/refresh');
+
+            // Process queued requests
+            processQueue(null);
+
+            // Retry original request
+            return axiosInstance(originalRequest);
+        } catch (refreshError) {
+            // Process queued requests with error
+            processQueue(refreshError as Error);
+
+            // Handle refresh failure
+            handleAuthFailure();
+
+            return Promise.reject(refreshError);
+        } finally {
+            isRefreshing = false;
+        }
+    }
+);
+
+// Helper function to handle auth failure
+const handleAuthFailure = () => {
+
+    // You can dispatch a custom event for your app to listen to
+    // window.dispatchEvent(new CustomEvent('auth:failure'));
+
+    // Redirect to login page
+    // Using window.location for simplicity
+    if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+    }
+};
+
+// // Optional: Add event listener for auth failure
+// if (typeof window !== 'undefined') {
+//     window.addEventListener('auth:failure', () => {
+//         // You can update your app state here
+//         console.log('Authentication failed - redirecting to login');
+//     });
+// }
 
 export default axiosInstance;
 
