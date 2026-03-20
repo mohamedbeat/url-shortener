@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Link } from './links/entities/link.entity';
 import { Repository } from 'typeorm';
@@ -12,18 +12,16 @@ export class AppService {
   ) { }
 
   async getLink(input: string) {
-
-    let link = await this.linkRepo.findOneBy({
+    const linkBySlug = await this.linkRepo.findOneBy({
       customSlug: input
     })
 
-    if (!!link) {
-      return link
+    if (linkBySlug) {
+      return linkBySlug
     }
 
-    link = await this.linkRepo.findOneBy({
+    return this.linkRepo.findOneBy({
       shortHash: input
     })
-    return link
   }
 }

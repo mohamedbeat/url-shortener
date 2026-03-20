@@ -1,33 +1,14 @@
-import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { createUser, User } from './entities/user.entity';
 import { Request } from 'express';
 import DeviceDetector from 'device-detector-js';
 import * as geoip from 'geoip-lite';
 import * as countries from 'i18n-iso-countries';
-import bcrypt from 'node_modules/bcryptjs';
-import { createHash, randomBytes } from 'crypto';
 import { Session } from './entities/session.entity';
-
-
-export type DeviceInfo = {
-    browser?: string;
-    os?: string;
-    deviceType?: string; // 'desktop', 'smartphone', 'tablet'
-    isMobile?: boolean;
-    bot?: boolean;
-    referer?: string
-    country?: string
-}
-export type SessionDeviceInfo = {
-    browser?: string;
-    os?: string;
-    deviceType?: string; // 'desktop', 'smartphone', 'tablet'
-    country?: string
-}
-
+import { UserService } from './user.service';
+import { SessionService } from './session.service';
+import { DeviceInfo, SessionDeviceInfo } from './auth.types';
 
 
 @Injectable()
@@ -38,22 +19,13 @@ export class AuthService {
     private deviceDetector = new DeviceDetector();
 
     constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-        @InjectRepository(Session)
-        private sessionRepo: Repository<Session>,
-
         private jwtService: JwtService,
+        private readonly userService: UserService,
+        private readonly sessionService: SessionService,
     ) { }
 
     async getUserById(id: string) {
-        const user = await this.userRepository.findOneBy({
-            id,
-        })
-        if (!user) {
-            throw new NotFoundException(`user with id ${id} not found`)
-        }
-        return user
+        return this.userService.getUserById(id)
     }
 
     getSafeUserInfo(user: User): Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'picture' | 'createdAt'> {
@@ -68,16 +40,7 @@ export class AuthService {
     }
 
     async validateGoogleUser(details: createUser) {
-        let user = await this.userRepository.findOneBy({ email: details.email });
-
-        if (!user) {
-            user = this.userRepository.create(details);
-            await this.userRepository.save(user);
-        }
-
-        await this.updateChangedData(details, user)
-
-        return user;
+        return this.userService.validateGoogleUser(details);
     }
 
     generateJwt(userId: string) {
@@ -86,29 +49,11 @@ export class AuthService {
     }
 
     async createSession(userId: string, deviceInfo: SessionDeviceInfo) {
-        const rawRefreshToken = randomBytes(40).toString('hex')
-        const hashedRefreshToken = createHash('sha256').update(rawRefreshToken).digest('hex')
-
-        const session = this.sessionRepo.create({
-            userId,
-            refreshTokenHash: hashedRefreshToken,
-            ...deviceInfo,
-        })
-
-        await this.sessionRepo.save(session)
-
-        return rawRefreshToken
-
+        return this.sessionService.createSession(userId, deviceInfo)
     }
 
     async getSession(userId: string, rawRefresh: string) {
-        const refreshHash = createHash('sha256').update(rawRefresh).digest('hex')
-
-        const session = await this.sessionRepo.findOneBy({
-            refreshTokenHash: refreshHash,
-            userId: userId
-        })
-        return session
+        return this.sessionService.getSession(userId, rawRefresh)
     }
 
     /**
@@ -118,18 +63,7 @@ export class AuthService {
      * @returns boolean
      */
     async isSessionValid(session: Session): Promise<boolean> {
-        // Check if session exists
-        if (!session) {
-            return false;
-        }
-
-        // Check if session has expired
-        const now = new Date();
-        if (now > session.expiresAt) {
-            return false;
-        }
-
-        return true;
+        return this.sessionService.isSessionValid(session)
     }
 
     async login(user: User, req: Request) {
@@ -173,9 +107,7 @@ export class AuthService {
         const newAccessToken = this.generateJwt(session.userId)
 
         // deleting old session
-        await this.sessionRepo.delete({
-            id: session.id
-        })
+        await this.sessionService.deleteSessionById(session.id)
 
         return {
             accessToken: newAccessToken,
@@ -202,21 +134,6 @@ export class AuthService {
             };
         }
     }
-
-    async updateChangedData(details: createUser, user: User) {
-        if (user.picture !== details.picture) {
-            user.picture = details.picture
-        }
-        if (user.firstName !== details.firstName) {
-            user.firstName = details.firstName
-        }
-
-        if (user.lastName !== details.lastName) {
-            user.lastName = details.lastName
-        }
-        await this.userRepository.save(user)
-    }
-
 
     async getDeviceInfo(req: Request): Promise<DeviceInfo | undefined> {
         const userAgent = req.headers['user-agent'];

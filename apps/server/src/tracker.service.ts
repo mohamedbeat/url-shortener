@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Link } from "./links/entities/link.entity";
 import { Repository } from "typeorm";
 import { Visit } from "./links/entities/visits.entity";
-import { DeviceInfo } from "./auth/auth.service";
+import { DeviceInfo } from "./auth/auth.types";
 
 
 @Injectable()
