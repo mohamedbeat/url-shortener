@@ -38,7 +38,9 @@ export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
 
 export const getAllLinks = async (params?: {
     page?: string,
-    limit?: string
+    limit?: string,
+    search?: string;
+    status?: string;
 },
     sort?: {
         field?: LinkSortFields,
@@ -53,8 +55,12 @@ export const getAllLinks = async (params?: {
     const field = sort?.field ?? 'createdAt'
     const order = sort?.order ?? 'DESC'
 
+    const search = params?.search ?? '';
+    const status = params?.status ?? 'all';
 
-    const res = await axiosInstance.get<Pagination<Link>>(`api/links?page=${page}&limit=${limit}&field=${field}&order=${order}`,)
+    const res = await axiosInstance.get<Pagination<Link>>(
+        `api/links?page=${page}&limit=${limit}&field=${field}&order=${order}&search=${search}&status=${status}`
+    );
     return res.data
 
 }

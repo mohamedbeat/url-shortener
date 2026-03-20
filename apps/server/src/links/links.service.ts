@@ -7,6 +7,7 @@ import { In, Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { LinkSortFields, SortOrder, type Pagination } from "@packages/shared/types"
 import { S3Service } from '../common/s3.service';
+import { FindAllLinksFiltersDto } from './dto/find-all-filter.dto';
 
 @Injectable()
 export class LinksService {
@@ -80,36 +81,31 @@ export class LinksService {
     userId: string,
     page: number = 1,
     limit: number = 10,
-    filters?: {
-      title?: string;
-      url?: string;
-      shortHash?: string;
-      customSlug?: string
-    },
+    filters?: FindAllLinksFiltersDto,
     sort?: {
       field?: LinkSortFields
       order?: SortOrder
     },
   ): Promise<Pagination<Link>> {
+
+    console.log(filters)
     const queryBuilder = this.linkRepo.createQueryBuilder('link');
 
     queryBuilder.andWhere('link.userId = :userId', { userId });
     // Apply filters if provided
-    if (filters?.title) {
-      queryBuilder.andWhere('link.title LIKE :title', { title: `%${filters.title}%` });
+    if (filters?.search) {
+      queryBuilder.andWhere(
+        `(link.title LIKE :search 
+        OR link.url LIKE :search 
+        OR link.shortHash LIKE :search 
+        OR link.customSlug LIKE :search)`,
+        { search: `%${filters.search}%` },
+      );
     }
 
-    if (filters?.url) {
-      queryBuilder.andWhere('link.url GLOB :url', { url: `*${filters.url}*` });
-    }
-
-    if (filters?.customSlug) {
-      queryBuilder.andWhere('link.customSlug LIKE :customSlug', { customSlug: `%${filters.customSlug}%` });
-    }
-
-    if (filters?.shortHash) {
-      queryBuilder.andWhere('link.shortHash GLOB :shortHash', {
-        shortHash: `*${filters.shortHash}*`
+    if (filters?.status && filters.status !== 'all') {
+      queryBuilder.andWhere('link.isActive = :isActive', {
+        isActive: filters.status === 'active',
       });
     }
 

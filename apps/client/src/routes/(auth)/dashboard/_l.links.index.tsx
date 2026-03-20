@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import {
   ChevronLeft,
@@ -16,6 +16,7 @@ import {
   Eye,
   EyeOff,
   MoreVertical,
+  X,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -40,12 +41,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { getAllLinks, toggleLinkStatus } from '@/lib/api/links';
-import type { LinksQueryParams } from '@/types/link';
+import type { LinksQueryParams, } from '@/types/link';
 import { CreateLinkDialog } from '@/components/dashboard/create-link-dialog';
 import { BASE_URL } from '@/lib/axios';
-import type { LinkSortFields, SortOrder } from '@packages/shared/types';
+import type { LinkSortFields, SortOrder, status } from '@packages/shared/types';
 import { DeleteLinkDialog } from '@/components/dashboard/delete-link-dialog';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
   component: LinksPage,
@@ -54,7 +57,9 @@ export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
       page: Number(search.page) || 1,
       limit: Number(search.limit) || 10,
       field: search.field as LinkSortFields || 'createdAt',
-      order: search.order as SortOrder || 'DESC'
+      order: search.order as SortOrder || 'DESC',
+      search: (search.search as string) || '',
+      status: (search.status as status) || 'all', // all | active | inactive
     };
   },
 })
@@ -68,7 +73,20 @@ function LinksPage() {
   // State for delete dialog
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+  const [searchInput, setSearchInput] = useState(search.search);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      navigate({
+        search: {
+          ...search,
+          search: searchInput,
+          page: 1,
+        },
+      });
+    }, 400);
 
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
   // Fetch links with query params including sorting
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['links', search],
@@ -76,6 +94,8 @@ function LinksPage() {
       {
         page: search.page?.toString(),
         limit: search.limit?.toString(),
+        search: search.search,
+        status: search.status,
       },
       {
         field: search.field,
@@ -181,6 +201,50 @@ function LinksPage() {
       {/* Links Table */}
       <Card>
         <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            {/* Search */}
+            <Input
+              placeholder="Search by title, URL, or slug..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="max-w-sm"
+            />
+
+            {/* Status */}
+            <Select value={search.status} onValueChange={(value) =>
+              navigate({
+                search: {
+                  ...search,
+                  status: value as status,
+                  page: 1,
+                },
+              })}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Reset */}
+            <Button variant="outline" onClick={() =>
+              navigate({
+                search: {
+                  page: 1,
+                  limit: 10,
+                  field: 'createdAt',
+                  order: 'DESC',
+                  search: '',
+                  status: 'all',
+                },
+              })}>
+              <X className="w-4 h-4 mr-2" />
+              Reset
+            </Button>
+          </div>
           <div className="rounded-md">
             <Table>
               <TableHeader>

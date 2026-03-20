@@ -13,4 +13,6 @@ export type Pagination<T> = {
 }
 
 export type SortOrder = 'ASC' | 'DESC'
-export type LinkSortFields = 'createdAt' | 'totalClicks' 
+export type LinkSortFields = 'createdAt' | 'totalClicks'
+
+export type status = 'all' | 'active' | 'inactive'

@@ -1,4 +1,4 @@
-import type { LinkSortFields, SortOrder } from "@packages/shared/types";
+import type { LinkSortFields, SortOrder, status } from "@packages/shared/types";
 
 
 export type Link = {
@@ -19,5 +19,7 @@ export type LinksQueryParams = {
     limit?: number;
     field?: LinkSortFields
     order?: SortOrder
+    search?: string,
+    status: status
 }
 
