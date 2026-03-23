@@ -95,7 +95,7 @@ export function TopLinks() {
     }
 
     return (
-        <Card>
+        <Card className='w-[350px] sm:w-auto overflow-y-auto overflow-x-auto'>
             <CardHeader>
                 <CardTitle>Top Performing Links</CardTitle>
                 <CardDescription>
@@ -124,13 +124,13 @@ export function TopLinks() {
                     ))}
                 </div>
             </CardContent>
-            <CardContent className="border-t pt-4">
+            {/* <CardContent className="border-t pt-4">
                 <Link to="/dashboard">
                     <Button variant="outline" className="w-full" >
                         View detailed analytics
                     </Button>
                 </Link>
-            </CardContent>
+            </CardContent> */}
         </Card>
     )
 }

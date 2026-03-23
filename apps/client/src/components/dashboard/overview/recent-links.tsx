@@ -178,7 +178,7 @@ export function RecentLinks() {
 
 
     return (
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 w-[350px] sm:w-auto">
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                     <CardTitle>Recent Links</CardTitle>

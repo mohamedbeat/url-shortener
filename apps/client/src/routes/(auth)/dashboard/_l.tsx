@@ -16,7 +16,7 @@ function DashboardLayout() {
         {/* <SidebarTrigger /> */}
         <AppSidebar />
         <div className="flex flex-1 flex-col">
-          <main className="flex-1 overflow-y-auto ">
+          <main className="flex-1 overflow-y-auto w-96 sm:w-auto ">
             <Header />
             <div className='p-5'>
               <Outlet />
