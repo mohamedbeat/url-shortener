@@ -17,6 +17,7 @@ import { Route as authDashboardLRouteImport } from './routes/(auth)/dashboard/_l
 import { Route as noauthLoginSuccessIndexRouteImport } from './routes/(noauth)/login/success.index'
 import { Route as authDashboardLIndexRouteImport } from './routes/(auth)/dashboard/_l.index'
 import { Route as authDashboardLLinksIndexRouteImport } from './routes/(auth)/dashboard/_l.links.index'
+import { Route as authDashboardLLinksAnalyticsIndexLinkIdRouteImport } from './routes/(auth)/dashboard/_l.links.analytics.index.$linkId'
 
 const noauthLRoute = noauthLRouteImport.update({
   id: '/(noauth)/_l',
@@ -58,6 +59,12 @@ const authDashboardLLinksIndexRoute =
     path: '/links/',
     getParentRoute: () => authDashboardLRoute,
   } as any)
+const authDashboardLLinksAnalyticsIndexLinkIdRoute =
+  authDashboardLLinksAnalyticsIndexLinkIdRouteImport.update({
+    id: '/links/analytics/index/$linkId',
+    path: '/links/analytics/index/$linkId',
+    getParentRoute: () => authDashboardLRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/dashboard': typeof authDashboardLRouteWithChildren
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof authDashboardLIndexRoute
   '/login/success/': typeof noauthLoginSuccessIndexRoute
   '/dashboard/links/': typeof authDashboardLLinksIndexRoute
+  '/dashboard/links/analytics/index/$linkId': typeof authDashboardLLinksAnalyticsIndexLinkIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof noauthLIndexRoute
@@ -75,6 +83,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof authDashboardLIndexRoute
   '/login/success': typeof noauthLoginSuccessIndexRoute
   '/dashboard/links': typeof authDashboardLLinksIndexRoute
+  '/dashboard/links/analytics/index/$linkId': typeof authDashboardLLinksAnalyticsIndexLinkIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -86,6 +95,7 @@ export interface FileRoutesById {
   '/(auth)/dashboard/_l/': typeof authDashboardLIndexRoute
   '/(noauth)/login/success/': typeof noauthLoginSuccessIndexRoute
   '/(auth)/dashboard/_l/links/': typeof authDashboardLLinksIndexRoute
+  '/(auth)/dashboard/_l/links/analytics/index/$linkId': typeof authDashboardLLinksAnalyticsIndexLinkIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/login/success/'
     | '/dashboard/links/'
+    | '/dashboard/links/analytics/index/$linkId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login/success'
     | '/dashboard/links'
+    | '/dashboard/links/analytics/index/$linkId'
   id:
     | '__root__'
     | '/(noauth)/_l'
@@ -115,6 +127,7 @@ export interface FileRouteTypes {
     | '/(auth)/dashboard/_l/'
     | '/(noauth)/login/success/'
     | '/(auth)/dashboard/_l/links/'
+    | '/(auth)/dashboard/_l/links/analytics/index/$linkId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -183,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authDashboardLLinksIndexRouteImport
       parentRoute: typeof authDashboardLRoute
     }
+    '/(auth)/dashboard/_l/links/analytics/index/$linkId': {
+      id: '/(auth)/dashboard/_l/links/analytics/index/$linkId'
+      path: '/links/analytics/index/$linkId'
+      fullPath: '/dashboard/links/analytics/index/$linkId'
+      preLoaderRoute: typeof authDashboardLLinksAnalyticsIndexLinkIdRouteImport
+      parentRoute: typeof authDashboardLRoute
+    }
   }
 }
 
@@ -200,11 +220,14 @@ const noauthLRouteWithChildren =
 interface authDashboardLRouteChildren {
   authDashboardLIndexRoute: typeof authDashboardLIndexRoute
   authDashboardLLinksIndexRoute: typeof authDashboardLLinksIndexRoute
+  authDashboardLLinksAnalyticsIndexLinkIdRoute: typeof authDashboardLLinksAnalyticsIndexLinkIdRoute
 }
 
 const authDashboardLRouteChildren: authDashboardLRouteChildren = {
   authDashboardLIndexRoute: authDashboardLIndexRoute,
   authDashboardLLinksIndexRoute: authDashboardLLinksIndexRoute,
+  authDashboardLLinksAnalyticsIndexLinkIdRoute:
+    authDashboardLLinksAnalyticsIndexLinkIdRoute,
 }
 
 const authDashboardLRouteWithChildren = authDashboardLRoute._addFileChildren(

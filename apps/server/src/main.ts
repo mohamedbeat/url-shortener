@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import { EnvService } from './config/env/env.service';
 import cookieParser from 'cookie-parser';
+import { DetailedLoggingInterceptor } from './common/interceptor/req.interceptor';
 
 // import * as cookieParser from 'cookie-parser';
 
@@ -21,7 +22,7 @@ async function bootstrap() {
 
 
   app.useLogger(logger)
-
+  app.useGlobalInterceptors(new DetailedLoggingInterceptor())
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     transform: true,

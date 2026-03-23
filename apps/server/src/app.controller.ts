@@ -4,7 +4,9 @@ import { type Response, type Request } from "express"
 import { TrackerService } from './tracker.service';
 import { EnvService } from './config/env/env.service';
 import { AuthService } from './auth/auth.service';
+import { Public } from './common/decorators/public.decorator';
 
+@Public()
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService,

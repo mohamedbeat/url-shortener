@@ -111,3 +111,36 @@ export async function bulkDeleteLinks(ids: string[]): Promise<void> {
         }
     });
 }
+
+
+export const fetchLinkAnalytics = async (linkId: string) => {
+    const response = await axiosInstance.get<AnalyticsData>(`api/links/analytics/${linkId}`);
+    return response.data;
+};
+export interface AnalyticsData {
+    clickMetrics: {
+        total: number;
+        last30Days: number;
+        last7Days: number;
+    };
+    clickTrend: Array<{ date: string; count: number }>;
+    geographicData: {
+        topCountries: Array<{ country: string; count: number }>;
+        totalCountries: number;
+    };
+    trafficSources: {
+        topReferrers: Array<{ source: string; count: number }>;
+        totalReferrers: number;
+    };
+    deviceData: {
+        deviceTypes: Array<{ name: string; count: number }>;
+        operatingSystems: Array<{ name: string; count: number }>;
+        browsers: Array<{ name: string; count: number }>;
+    };
+    temporalPatterns: {
+        clicksByHour: Array<{ hour: number; count: number }>;
+        clicksByDay: Array<{ day: string; count: number }>;
+        peakHours: Array<{ hour: number; count: number }>;
+        bestTimeframes: Array<{ day: string; hour: number; count: number }>;
+    };
+}

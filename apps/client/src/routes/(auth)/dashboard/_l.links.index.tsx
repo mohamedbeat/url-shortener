@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -18,6 +18,7 @@ import {
   MoreVertical,
   X,
   SquareStack,
+  BarChart3,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -51,6 +52,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreateBulkLinkDialog } from '@/components/dashboard/create-bulk-link-dialog ';
+import { Separator } from '@/components/ui/separator';
 
 export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
   component: LinksPage,
@@ -361,6 +363,22 @@ function LinksPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48">
+                              <Link to='/dashboard/links/analytics/index/$linkId'
+                                params={{
+                                  linkId: link.id
+                                }}
+
+                              >
+                                <DropdownMenuItem
+                                  className={"cursor-pointer"}
+                                >
+                                  <BarChart3 />
+                                  <span>Analytics</span>
+                                </DropdownMenuItem>
+
+                              </Link>
+
+                              <Separator />
                               {/* Copy Options */}
                               <DropdownMenuItem
                                 onClick={() => copyToClipboard(shortUrl, 'Short URL')}

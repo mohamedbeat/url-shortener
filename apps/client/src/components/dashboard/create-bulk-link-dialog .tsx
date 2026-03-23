@@ -5,10 +5,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Link2, Loader2, Plus, Trash2, X } from 'lucide-react';
-import { createBulkLink, type CreateBulkLinkInput, createBulkLinkSchema } from '@/lib/api/links';
-import { parseValidationErrors } from '@/lib/form-validation-parser';
+import { createBulkLink, createBulkLinkSchema } from '@/lib/api/links';
 import { handleApiError } from '@/lib/axios';
 import { useNavigate } from '@tanstack/react-router';
 import { Separator } from '../ui/separator';
@@ -129,6 +127,7 @@ export function CreateBulkLinkDialog({ onSuccess, children }: CreateBulkLinkDial
                                 size="sm"
                                 onClick={addLinkField}
                                 disabled={createBulkLinkMutation.isPending}
+                                className={"cursor-pointer"}
                             >
                                 <Plus className="h-4 w-4 mr-1" />
                                 Add URL
@@ -218,13 +217,13 @@ export function CreateBulkLinkDialog({ onSuccess, children }: CreateBulkLinkDial
                             </div>
                         </>
                     )}
-
                     <DialogFooter className="gap-2">
                         <Button
                             type="button"
                             variant="outline"
                             onClick={() => setOpen(false)}
                             disabled={createBulkLinkMutation.isPending}
+                            className={"cursor-pointer"}
                         >
                             Cancel
                         </Button>

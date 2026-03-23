@@ -16,14 +16,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 // Mock data for URL shortener stats
 const urlStats = [
-    {
-        title: 'Click Rate',
-        value: '24.8%',
-        change: '+5.2%',
-        trend: 'up',
-        icon: TrendingUp,
-        description: 'Average CTR',
-    },
+    // {
+    //     title: 'Click Rate',
+    //     value: '24.8%',
+    //     change: '+5.2%',
+    //     trend: 'up',
+    //     icon: TrendingUp,
+    //     description: 'Average CTR',
+    // },
     {
         title: 'QR Codes',
         value: '342',
@@ -37,7 +37,7 @@ const urlStats = [
 // Skeleton component for the stats grid
 function StatsGridSkeleton() {
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(4)].map((_, i) => (
                 <Card key={i}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -82,7 +82,7 @@ export function QuickStatsGrid() {
     }
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">

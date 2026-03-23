@@ -17,9 +17,10 @@ import { SortLinksDto } from './dto/sort-links-query.dto';
 import { IdsDto } from './dto/delete-by-ids.dto';
 import { User } from 'src/common/decorators/user-decorator';
 import { CreateBulkLinksDto } from './dto/create-bulk-link.dto';
+import { AnalyticsService } from './analytics.service';
 @Controller('api/links')
 export class LinksController {
-  constructor(private readonly linksService: LinksService) { }
+  constructor(private readonly linksService: LinksService, private readonly analyticsService: AnalyticsService) { }
 
   @Post()
   create(@Body() createLinkDto: CreateLinkDto, @User('id') userId: string) {
@@ -45,6 +46,11 @@ export class LinksController {
 
 
     return this.linksService.findAll(userId, pagination.page, pagination.limit, filter, sort);
+  }
+
+  @Get("analytics/:id")
+  async getLinkAnalytics(@User('id') userId: string, @Param('id') linkId: string) {
+    return await this.analyticsService.getAnalytics(linkId, userId)
   }
 
   @Get("stats")

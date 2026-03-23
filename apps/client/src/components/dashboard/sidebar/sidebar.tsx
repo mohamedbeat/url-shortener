@@ -49,12 +49,12 @@ const mainNavigation = [
     badge: '24',
     description: 'Manage your shortened URLs'
   },
-  {
-    title: 'Analytics',
-    url: '/dashboard/analytics',
-    icon: BarChart3,
-    description: 'Track link performance'
-  },
+  // {
+  //   title: 'Analytics',
+  //   url: '/dashboard/analytics',
+  //   icon: BarChart3,
+  //   description: 'Track link performance'
+  // },
   {
     title: 'QR Codes',
     url: '/dashboard/qr-codes',
