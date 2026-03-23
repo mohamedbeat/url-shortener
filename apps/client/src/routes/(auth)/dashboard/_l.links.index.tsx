@@ -372,7 +372,7 @@ function LinksPage() {
                                 <DropdownMenuItem
                                   className={"cursor-pointer"}
                                 >
-                                  <BarChart3 />
+                                  <BarChart3 className="mr-2 h-4 w-4" />
                                   <span>Analytics</span>
                                 </DropdownMenuItem>
 
