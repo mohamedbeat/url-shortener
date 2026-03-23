@@ -348,7 +348,7 @@ function AnalyticsPage() {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analytics.temporalPatterns.clicksByHour}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="hour" tickFormatter={(hour) => "${hour}:00"} />
+                      <XAxis dataKey="hour" tickFormatter={(hour) => `${hour}:00`} />
                       <YAxis />
                       <Tooltip />
                       <Bar dataKey="count" fill="#8b5cf6" />
