@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from '../ui/select';
 import { QRCodeGenerator } from './links/qr-code';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface QRCodeDialogProps {
     url: string;
@@ -30,7 +31,8 @@ interface QRCodeDialogProps {
 }
 
 export function QRCodeDialog({ url, shortCode, open, onOpenChange, showSizeControl = true }: QRCodeDialogProps) {
-    const [size, setSize] = useState(256);
+    const isMobile = useIsMobile()
+    const [size, setSize] = useState(isMobile ? 128 : 256);
     const [errorLevel, setErrorLevel] = useState<'L' | 'M' | 'Q' | 'H'>('H');
 
     return (
@@ -110,6 +112,7 @@ export function QRCodeDialog({ url, shortCode, open, onOpenChange, showSizeContr
                         type="button"
                         variant="secondary"
                         onClick={() => onOpenChange(false)}
+                        className={"cursor-pointer"}
                     >
                         Close
                     </Button>

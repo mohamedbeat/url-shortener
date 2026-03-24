@@ -103,7 +103,7 @@ export function QRCodeGenerator({
                             variant="outline"
                             size="sm"
                             onClick={handleCopy}
-                            className="gap-2"
+                            className="gap-2 cursor-pointer"
                         >
                             <Copy className="h-4 w-4" />
                             Copy
@@ -114,7 +114,7 @@ export function QRCodeGenerator({
                             variant="outline"
                             size="sm"
                             onClick={handleDownload}
-                            className="gap-2"
+                            className="gap-2 cursor-pointer"
                         >
                             <Download className="h-4 w-4" />
                             Download
