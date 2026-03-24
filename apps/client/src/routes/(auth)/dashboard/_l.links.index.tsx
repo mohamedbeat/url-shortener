@@ -19,6 +19,7 @@ import {
   X,
   SquareStack,
   BarChart3,
+  QrCode,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -53,6 +54,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreateBulkLinkDialog } from '@/components/dashboard/create-bulk-link-dialog ';
 import { Separator } from '@/components/ui/separator';
+import { QRCodeDialog } from '@/components/dashboard/qrcode-dialog';
 
 export const Route = createFileRoute('/(auth)/dashboard/_l/links/')({
   component: LinksPage,
@@ -72,10 +74,14 @@ function LinksPage() {
   const navigate = useNavigate({ from: Route.fullPath });
   const search = Route.useSearch();
   const queryClient = useQueryClient();
-  const [deleteLinkId, setDeleteLinkId] = useState<string | null>(null);
 
   // State for delete dialog
+  const [deleteLinkId, setDeleteLinkId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  // State for qrcode dialog
+  const [qrcodeShortLink, setQrCodeShortLink] = useState<string | null>(null);
+  const [qrcodeDialogOpen, setQrcodeDialogOpen] = useState(false);
+
 
   const [searchInput, setSearchInput] = useState(search.search);
   useEffect(() => {
@@ -378,6 +384,18 @@ function LinksPage() {
 
                               </Link>
 
+
+                              <DropdownMenuItem
+                                className="cursor-pointer "
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setQrCodeShortLink(link.customSlug || link.shortHash)
+                                  setQrcodeDialogOpen(true)
+                                }}
+                              >
+                                <QrCode className="mr-2 h-4 w-4" />
+                                <span>QR Code</span>
+                              </DropdownMenuItem>
                               <Separator />
                               {/* Copy Options */}
                               <DropdownMenuItem
@@ -545,6 +563,11 @@ function LinksPage() {
       <DeleteLinkDialog id={deleteLinkId} open={deleteDialogOpen} onOpenChange={(open) => {
         setDeleteDialogOpen(open);
         if (!open) setDeleteLinkId(null);
+      }} />
+
+      <QRCodeDialog url={BASE_URL} shortCode={qrcodeShortLink || ''} open={qrcodeDialogOpen} onOpenChange={(open) => {
+        setQrcodeDialogOpen(open);
+        if (!open) setQrCodeShortLink(null);
       }} />
 
     </div>
