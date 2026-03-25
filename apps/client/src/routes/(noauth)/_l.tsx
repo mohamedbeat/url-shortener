@@ -6,7 +6,7 @@ export const Route = createFileRoute('/(noauth)/_l')({
 
 function RouteComponent() {
   return <>
-    <div className="p-2 flex gap-2">
+    {/* <div className="p-2 flex gap-2">
       <Link to="/" className="[&.active]:font-bold">
         Home
       </Link>{' '}
@@ -19,7 +19,7 @@ function RouteComponent() {
     </div>
     <hr />
 
-    <div>no auth layout</div>
+    <div>no auth layout</div> */}
     <Outlet />
   </>
 

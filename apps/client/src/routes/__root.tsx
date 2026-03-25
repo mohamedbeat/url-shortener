@@ -10,7 +10,6 @@ const RootDocument = () => {
   const { isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-
   useEffect(() => {
     if (isLoading) return
 
@@ -24,25 +23,25 @@ const RootDocument = () => {
     const isLoginRoute =
       pathname === '/login' ||
       pathname.startsWith('/login/success') ||
-      // Backwards-compatible alias if you ever use this path name.
       pathname.startsWith('/logic/success')
 
-    const isPublicRouteForUnauthenticated =
-      pathname === '/' ||
-      pathname === '/login' ||
-      pathname.startsWith('/login/success') ||
-      pathname.startsWith('/logic/success')
+    const isHomeRoute = pathname === '/'
 
-    // Unauthenticated users can only access public routes; everything else goes to /login.
-    if (!isAuthenticated && !isPublicRouteForUnauthenticated) {
+    const isDashboardRoute = pathname.startsWith('/dashboard')
+
+    // ❌ Not authenticated → block dashboard only
+    if (!isAuthenticated && isDashboardRoute) {
       navigate({ to: '/login', replace: true })
       return
     }
 
-    // Authenticated users shouldn't see /login or /login/success; send them to the dashboard.
+    // ❌ Authenticated → block login pages only
     if (isAuthenticated && isLoginRoute) {
       navigate({ to: '/dashboard', replace: true })
+      return
     }
+
+    // ✅ Everything else (including "/") is allowed
   }, [isAuthenticated, isLoading, location.pathname, navigate])
 
   if (isLoading) {

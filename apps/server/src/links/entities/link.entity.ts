@@ -14,6 +14,7 @@ import { User } from 'src/auth/entities/user.entity';
 
 @Entity()
 @Index(['id', 'userId'])
+@Index(['url', 'userId'])
 export class Link {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -22,7 +23,7 @@ export class Link {
   title?: string;
 
   @Column({
-    unique: true,
+    unique: false
   })
   url: string;
 
