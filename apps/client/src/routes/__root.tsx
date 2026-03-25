@@ -10,24 +10,30 @@ const RootDocument = () => {
   const { isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+
+
+
   useEffect(() => {
     if (isLoading) return
 
     const normalizePathname = (path: string) => {
+      if (!path) return '/'
       if (path !== '/' && path.endsWith('/')) return path.slice(0, -1)
       return path
     }
 
     const pathname = normalizePathname(location.pathname)
 
+    const isHomeRoute = pathname === '/'
     const isLoginRoute =
       pathname === '/login' ||
       pathname.startsWith('/login/success') ||
       pathname.startsWith('/logic/success')
 
-    const isHomeRoute = pathname === '/'
-
     const isDashboardRoute = pathname.startsWith('/dashboard')
+
+    // ✅ ALWAYS allow "/"
+    if (isHomeRoute) return
 
     // ❌ Not authenticated → block dashboard only
     if (!isAuthenticated && isDashboardRoute) {
@@ -41,7 +47,6 @@ const RootDocument = () => {
       return
     }
 
-    // ✅ Everything else (including "/") is allowed
   }, [isAuthenticated, isLoading, location.pathname, navigate])
 
   if (isLoading) {

@@ -110,9 +110,9 @@ const handleAuthFailure = () => {
 
     // Redirect to login page
     // Using window.location for simplicity
-    if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
-    }
+    // if (!window.location.pathname.includes('/login')) {
+    //     window.location.href = '/login';
+    // }
 };
 
 // // Optional: Add event listener for auth failure
