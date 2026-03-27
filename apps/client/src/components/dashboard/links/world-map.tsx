@@ -2,12 +2,10 @@ import { useState } from 'react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps';
 import { scaleLinear } from 'd3-scale';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { X } from 'lucide-react'; // Make sure you have lucide-react installed
 
 // World map topology URL
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json";
-// const geoUrl =
-//     "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
 
 interface WorldMapProps {
     data: Array<{ country: string; count: number }>;
@@ -32,33 +30,48 @@ export function WorldMap({ data, totalClicks }: WorldMapProps) {
     // Find max count for color scaling
     const maxCount = Math.max(...data.map(d => d.count), 1);
 
-    // Create color scale based on count (blue gradient with opacity)
+    // Create color scale based on count - using solid colors (no opacity)
     const colorScale = scaleLinear<string>()
         .domain([0, maxCount])
-        .range(["rgba(59, 130, 246, 0.1)", "rgba(59, 130, 246, 0.9)"])
+        .range(["#e0f2fe", "#1e3a8a"]) // Light blue to dark blue (solid colors)
         .interpolate((a, b) => (t) => {
-            const color1 = a.match(/\d+/g)?.map(Number);
-            const color2 = b.match(/\d+/g)?.map(Number);
+            // Simple RGB interpolation for solid colors
+            const color1 = hexToRgb(a);
+            const color2 = hexToRgb(b);
             if (!color1 || !color2) return a;
 
-            const r = Math.round(color1[0] + (color2[0] - color1[0]) * t);
-            const g = Math.round(color1[1] + (color2[1] - color1[1]) * t);
-            const bVal = Math.round(color1[2] + (color2[2] - color1[2]) * t);
-            const opacity = color1[3] + (color2[3] - color1[3]) * t;
+            const r = Math.round(color1.r + (color2.r - color1.r) * t);
+            const g = Math.round(color1.g + (color2.g - color1.g) * t);
+            const bVal = Math.round(color1.b + (color2.b - color1.b) * t);
 
-            return `rgba(${r}, ${g}, ${bVal}, ${opacity})`;
+            return `rgb(${r}, ${g}, ${bVal})`;
         });
+
+    // Helper function to convert hex to RGB
+    const hexToRgb = (hex: string) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    };
 
     const getCountryColor = (countryName: string) => {
         const count = countryDataMap.get(countryName.toLowerCase());
-        if (!count) return "rgba(156, 163, 175, 0.1)"; // Light gray for no data
+        if (count === undefined) return "#e5e7eb"; // Light gray for no data
         return colorScale(count);
     };
 
-    const handleMouseEnter = (geo: any, evt: React.MouseEvent) => {
+    const handleClick = (geo: any, evt: React.MouseEvent) => {
+        // Stop propagation to prevent the map click handler from closing the tooltip immediately
+        evt.stopPropagation();
+
         const countryName = geo.properties.name;
         const count = countryDataMap.get(countryName.toLowerCase()) || 0;
+        console.log(`Clicked on ${countryName}: ${count} clicks`);
 
+        // Show tooltip on click
         setTooltipData({
             country: countryName,
             count,
@@ -67,25 +80,25 @@ export function WorldMap({ data, totalClicks }: WorldMapProps) {
         });
     };
 
-    const handleMouseMove = (evt: React.MouseEvent) => {
-        if (tooltipData) {
-            setTooltipData({
-                ...tooltipData,
-                x: evt.clientX,
-                y: evt.clientY,
-            });
+    // Close tooltip when clicking outside (on the map container but not on a country)
+    const handleMapClick = (evt: React.MouseEvent) => {
+        // Only close if clicking directly on the map background, not on a country
+        if (evt.target === evt.currentTarget || (evt.target as HTMLElement).classList.contains('rsm-svg')) {
+            setTooltipData(null);
         }
     };
 
-    const handleMouseLeave = () => {
+    // Close tooltip function
+    const closeTooltip = (evt: React.MouseEvent) => {
+        evt.stopPropagation(); // Prevent click from bubbling to map
         setTooltipData(null);
     };
 
-    const handleClick = (geo: any) => {
-        const countryName = geo.properties.name;
-        const count = countryDataMap.get(countryName.toLowerCase()) || 0;
-        // You can add additional logic here, like showing a modal with more details
-        console.log(`Clicked on ${countryName}: ${count} clicks`);
+    // Optional: Close tooltip when pressing Escape key
+    const handleKeyDown = (evt: React.KeyboardEvent) => {
+        if (evt.key === 'Escape') {
+            setTooltipData(null);
+        }
     };
 
     return (
@@ -94,11 +107,16 @@ export function WorldMap({ data, totalClicks }: WorldMapProps) {
                 <CardHeader>
                     <CardTitle>World Map View</CardTitle>
                     <CardDescription>
-                        Countries colored by click count. Hover or click to see details.
+                        Countries colored by click count. Click on any country to see details.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="relative w-full h-[500px] bg-muted/20 rounded-lg">
+                    <div
+                        className="relative w-full h-[500px] bg-muted/20 rounded-lg"
+                        onClick={handleMapClick}
+                        onKeyDown={handleKeyDown}
+                        tabIndex={0}
+                    >
                         <ComposableMap
                             projection="geoMercator"
                             projectionConfig={{
@@ -124,12 +142,12 @@ export function WorldMap({ data, totalClicks }: WorldMapProps) {
                                                     default: {
                                                         outline: "none",
                                                         transition: "all 0.3s ease",
+                                                        cursor: "pointer",
                                                     },
                                                     hover: {
-                                                        fill: "#3b82f6",
+                                                        fill: "#3b82f6", // Brighter blue on hover
                                                         stroke: "#ffffff",
                                                         strokeWidth: 1,
-                                                        cursor: "pointer",
                                                         transition: "all 0.3s ease",
                                                     },
                                                     pressed: {
@@ -138,10 +156,7 @@ export function WorldMap({ data, totalClicks }: WorldMapProps) {
                                                         strokeWidth: 1,
                                                     },
                                                 }}
-                                                onMouseEnter={(evt) => handleMouseEnter(geo, evt)}
-                                                onMouseMove={handleMouseMove}
-                                                onMouseLeave={handleMouseLeave}
-                                                onClick={() => handleClick(geo)}
+                                                onClick={(evt) => handleClick(geo, evt)}
                                             />
                                         ))
                                     }
@@ -154,15 +169,15 @@ export function WorldMap({ data, totalClicks }: WorldMapProps) {
                             <div className="text-sm font-semibold mb-2">Click Count</div>
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-6 h-3 rounded" style={{ backgroundColor: "rgba(59, 130, 246, 0.1)" }} />
+                                    <div className="w-6 h-3 rounded" style={{ backgroundColor: "#e0f2fe" }} />
                                     <span className="text-xs">Low</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-6 h-3 rounded" style={{ backgroundColor: "rgba(59, 130, 246, 0.5)" }} />
+                                    <div className="w-6 h-3 rounded" style={{ backgroundColor: "#7c3aed" }} />
                                     <span className="text-xs">Medium</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-6 h-3 rounded" style={{ backgroundColor: "rgba(59, 130, 246, 0.9)" }} />
+                                    <div className="w-6 h-3 rounded" style={{ backgroundColor: "#1e3a8a" }} />
                                     <span className="text-xs">High</span>
                                 </div>
                             </div>
@@ -176,25 +191,36 @@ export function WorldMap({ data, totalClicks }: WorldMapProps) {
                 </CardContent>
             </Card>
 
-            {/* Custom Tooltip */}
+            {/* Custom Tooltip with Close Button */}
             {tooltipData && (
                 <div
-                    className="fixed z-50 pointer-events-none"
+                    className="fixed z-50"
                     style={{
                         left: tooltipData.x + 10,
                         top: tooltipData.y - 10,
                         transform: 'translate(0, -100%)',
                     }}
                 >
-                    <div className="bg-popover text-popover-foreground rounded-lg shadow-md border p-2 min-w-[150px]">
-                        <div className="font-semibold">{tooltipData.country}</div>
-                        <div className="text-sm text-muted-foreground">
-                            {tooltipData.count.toLocaleString()} clicks
-                            {totalClicks > 0 && (
-                                <span className="ml-1">
-                                    ({((tooltipData.count / totalClicks) * 100).toFixed(1)}%)
-                                </span>
-                            )}
+                    <div className="bg-popover text-popover-foreground rounded-lg shadow-md border min-w-[200px]">
+                        <div className="flex items-center justify-between p-2 border-b">
+                            <div className="font-semibold">{tooltipData.country}</div>
+                            <button
+                                onClick={closeTooltip}
+                                className="p-1 hover:bg-muted rounded-md transition-colors"
+                                aria-label="Close tooltip"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+                        <div className="p-2">
+                            <div className="text-sm text-muted-foreground">
+                                {tooltipData.count.toLocaleString()} clicks
+                                {totalClicks > 0 && (
+                                    <span className="ml-1">
+                                        ({((tooltipData.count / totalClicks) * 100).toFixed(1)}%)
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
