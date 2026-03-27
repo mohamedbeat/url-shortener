@@ -10,7 +10,7 @@ import { UserService } from './user.service';
 import { SessionService } from './session.service';
 import { DeviceInfo, SessionDeviceInfo } from './auth.types';
 import { EnvService } from 'src/config/env/env.service';
-
+import enLocale from 'i18n-iso-countries/langs/en.json';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +18,11 @@ export class AuthService {
     private readonly logger = new Logger(AuthService.name)
 
     private deviceDetector = new DeviceDetector();
+    private preferredCountryNames: { [code: string]: string } = {
+        'CN': 'China',
+        'KR': 'South Korea',  // i18n might return "Republic of Korea"
+        // Add any other countries with preferred short names
+    };
 
     constructor(
         private jwtService: JwtService,
@@ -153,7 +158,17 @@ export class AuthService {
         await this.sessionService.deleteSessionById(session.id);
     }
 
+    getCountryDisplayName(countryCode: string, locale: string = 'en'): string {
+        // Check if we have a preferred name for this country
+        if (this.preferredCountryNames[countryCode]) {
+            return this.preferredCountryNames[countryCode];
+        }
+
+        // Otherwise use the i18n library
+        return countries.getName(countryCode, locale) || countryCode;
+    }
     async getDeviceInfo(req: Request): Promise<DeviceInfo | undefined> {
+        countries.registerLocale(enLocale);
         const userAgent = req.headers['user-agent'];
         const referer = req.headers.referer;
         let ipAddress = req.ip || req.socket.remoteAddress;
@@ -185,7 +200,8 @@ export class AuthService {
 
             const geo = geoip.lookup(ipAddress)
             if (geo) {
-                info.country = countries.getName(geo.country, "en")
+                // info.country = countries.getName(geo.country, "en")
+                info.country = this.getCountryDisplayName(geo.country, 'en')
             }
         }
         // Check if any property has a truthy value
