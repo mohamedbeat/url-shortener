@@ -1,4 +1,3 @@
-// routes/(auth)/dashboard/_l/links/analytics/index.tsx
 import { createFileRoute, useParams } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +23,7 @@ import {
   Area,
 } from 'recharts';
 import { fetchLinkAnalytics, type AnalyticsData } from '@/lib/api/links';
+import { WorldMap } from '@/components/dashboard/links/world-map';
 
 export const Route = createFileRoute('/(auth)/dashboard/_l/links/analytics/index/$linkId')({
   component: AnalyticsPage,
@@ -216,6 +216,11 @@ function AnalyticsPage() {
               </div>
             </CardContent>
           </Card>
+          {/* Map View Section - New addition */}
+          <WorldMap
+            data={analytics.geographicData.topCountries}
+            totalClicks={analytics.clickMetrics.total}
+          />
         </TabsContent>
 
         {/* Traffic Sources Tab */}
