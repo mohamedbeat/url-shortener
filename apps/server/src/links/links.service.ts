@@ -307,29 +307,50 @@ export class LinksService {
     }
   }
 
-  // Cron job to delete expired links 
-  // @Cron(CronExpression.EVERY_10_SECONDS)
-  async deleteExpiredLinks() {
-    console.log('cron runing')
-    const tenDaysAgo = new Date();
-    // tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
-    tenDaysAgo.setDate(tenDaysAgo.getSeconds() - 10);
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async markExpiredLinks() {
+    console.log('EXPIRY CRON JOB')
+    const now = new Date();
 
-    const expiredLinks = await this.linkRepo.find({
-      where: {
-        expiresAt: LessThan(tenDaysAgo),
+    // Direct bulk update - no fetching needed
+    const result = await this.linkRepo
+      .createQueryBuilder()
+      .update(Link)
+      .set({ isExpired: true })
+      .where('expiresAt IS NOT NULL')
+      .andWhere('expiresAt <= :now', { now })
+      .andWhere('isExpired = :isExpired', { isExpired: false })
+      .execute();
 
-      },
-    });
-
-    for (const link of expiredLinks) {
-      await this.linkRepo.delete({
-        id: link.id
-      });
-      console.log(`Deleted expired link: ${link.shortHash}`);
+    if (result.affected && result.affected > 0) {
+      console.log(`[${new Date().toISOString()}] Marked ${result.affected} links as expired`);
     }
-
-    console.log(`Deleted ${expiredLinks.length} expired links`);
   }
 
+  // Cron job to delete expired links 
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async deleteExpiredLinks() {
+    console.log('DELETE CRON JOB RUNNING');
+
+    // Calculate the date 7 days ago
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    // Delete links that:
+    // 1. Are marked as expired
+    // 2. Expired at least 7 days ago
+    const result = await this.linkRepo
+      .createQueryBuilder()
+      .delete()
+      .from(Link)
+      .where('isExpired = :isExpired', { isExpired: true })
+      .andWhere('expiresAt <= :threshold', { threshold: sevenDaysAgo })
+      .execute();
+
+    if (result.affected && result.affected > 0) {
+      console.log(`[${new Date().toISOString()}] Deleted ${result.affected} links that expired more than 7 days ago`);
+    } else {
+      console.log(`[${new Date().toISOString()}] No links to delete`);
+    }
+  }
 }

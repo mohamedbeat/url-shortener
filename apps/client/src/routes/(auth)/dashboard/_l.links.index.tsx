@@ -294,6 +294,15 @@ function LinksPage() {
                       {getSortIcon('createdAt')}
                     </div>
                   </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                  // onClick={() => handleSort('createdAt')}
+                  >
+                    <div className="flex items-center">
+                      Expires at
+                      {/* {getSortIcon('createdAt')} */}
+                    </div>
+                  </TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -352,14 +361,17 @@ function LinksPage() {
                         </TableCell>
                         <TableCell>
                           <Badge
-                            className={link.isActive ? 'bg-green-600 hover:bg-green-700' : ''}
-                            variant={link.isActive ? 'default' : 'secondary'}
+                            className={link.isActive && !link.isExpired ? 'bg-green-600 hover:bg-green-700' : ''}
+                            variant={link.isActive && !link.isExpired ? 'default' : 'secondary'}
                           >
-                            {link.isActive ? 'Active' : 'Inactive'}
+                            {link.isActive && !link.isExpired ? 'Active' : 'Inactive'}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {formatDistanceToNow(new Date(link.createdAt), { addSuffix: true })}
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {formatDistanceToNow(new Date(link.expiresAt), { addSuffix: true })}
                         </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>

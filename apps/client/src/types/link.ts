@@ -9,6 +9,8 @@ export type Link = {
     customSlug: string;
     totalClicks: number;
     isActive: boolean;
+    isExpired: boolean;
+    expiresAt: string; // ISO 8601 date string
     createdAt: string; // ISO 8601 date string
     updatedAt: string; // ISO 8601 date string
     publicURL?: string;

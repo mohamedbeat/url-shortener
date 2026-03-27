@@ -85,8 +85,8 @@ export class Link {
   @BeforeInsert()
   calculateExpiryDate() {
     const expiryDate = new Date();
-    // expiryDate.setDate(expiryDate.getDate() + 10);
-    expiryDate.setDate(expiryDate.getSeconds() + 10);
+    expiryDate.setDate(expiryDate.getDate() + 7);
+    // expiryDate.setSeconds(expiryDate.getSeconds() + 60 * 2);
     this.expiresAt = expiryDate
   }
 

@@ -12,6 +12,7 @@ import { Link } from "@tanstack/react-router";
 import { AlertCircleIcon, Copy, Edit, ExternalLink, MoreHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { DeleteLinkDialog } from "../delete-link-dialog";
+import { formatDistanceToNow } from "date-fns";
 
 
 export function RecentLinks() {
@@ -90,6 +91,7 @@ export function RecentLinks() {
                                 <TableHead>Original URL</TableHead>
                                 <TableHead className="text-center">Clicks</TableHead>
                                 <TableHead>Created</TableHead>
+                                <TableHead>Expires At</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
@@ -209,6 +211,7 @@ export function RecentLinks() {
                             <TableHead>Original URL</TableHead>
                             <TableHead className="text-center">Clicks</TableHead>
                             <TableHead>Created</TableHead>
+                            <TableHead>Expires At</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
@@ -239,14 +242,17 @@ export function RecentLinks() {
                                     {link.totalClicks.toString()}
                                 </TableCell>
                                 <TableCell className="text-sm text-muted-foreground">
-                                    {link.createdAt}
+                                    {formatDistanceToNow(new Date(link.createdAt), { addSuffix: true })}
+                                </TableCell>
+                                <TableCell className="text-sm text-muted-foreground">
+                                    {formatDistanceToNow(new Date(link.expiresAt), { addSuffix: true })}
                                 </TableCell>
                                 <TableCell>
                                     <Badge
-                                        variant={link.isActive ? 'default' : 'secondary'}
-                                        className={link.isActive ? 'bg-green-600' : ''}
+                                        variant={link.isActive && !link.isExpired ? 'default' : 'secondary'}
+                                        className={link.isActive && !link.isExpired ? 'bg-green-600' : ''}
                                     >
-                                        {link.isActive ? "Active" : "Not active"}
+                                        {link.isActive && !link.isExpired ? "Active" : "Not active"}
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right">

@@ -28,7 +28,6 @@ export class AppController {
     console.log("Device Info:", info)
 
     if (!info) {
-      console.log("here")
       throw new InternalServerErrorException("Something went wrong while tracking the visit.")
     }
 
@@ -37,7 +36,7 @@ export class AppController {
     }
 
     const link = await this.appService.getLink(hash);
-    if (!link || !link.isActive) {
+    if (!link || !link.isActive || link.isExpired) {
       // throw new NotFoundException(`Link not found.`)
       const frontEndUrl = `http://localhost:3001/notfound`
       return res.redirect(HttpStatus.TEMPORARY_REDIRECT, frontEndUrl)
@@ -47,7 +46,6 @@ export class AppController {
     await this.trackerService.trackLinkVisit(link.id, info)
 
 
-    // http://localhost:3000/link?3423=312
     return res.redirect(HttpStatus.TEMPORARY_REDIRECT, link.url)
   }
 }
