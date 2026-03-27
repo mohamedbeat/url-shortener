@@ -38,7 +38,8 @@ const RootDocument = () => {
 
     // ❌ Not authenticated → block dashboard only
     if (!isAuthenticated && isDashboardRoute) {
-      navigate({ to: '/login', replace: true })
+      // disabled coz we doing it inside axios instance
+      // navigate({ to: '/login', replace: true })
       return
     }
 

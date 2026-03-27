@@ -32,6 +32,7 @@ export class AuthController {
     // req.user is populated by our GoogleStrategy's validate() method
     const tokens = await this.authService.login(req.user as User, req);
 
+    // NOTE:
     // IMPORTANT:
     // Cookies are sent based on the browser's origin (frontend host) vs the backend host.
     // Hardcoding localhost here can break cookie sending if your frontend/API run on different hosts.
@@ -55,13 +56,11 @@ export class AuthController {
     // return 
   }
 
-  @Post('refreshTokens')
   @Public()
+  @Post('refreshTokens')
   async refreshTokens(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const accessToken = req.cookies['accessToken']
     const refreshToken = req.cookies['refreshToken']
-    console.log(accessToken)
-    console.log(refreshToken)
     const tokens = await this.authService.refreshTokens(refreshToken, accessToken)
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,

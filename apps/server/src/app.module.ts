@@ -14,6 +14,7 @@ import { Link } from './links/entities/link.entity';
 import { TrackerService } from './tracker.service';
 import { Visit } from './links/entities/visits.entity';
 import { AuthModule } from './auth/auth.module';
+import { ScheduleModule } from '@nestjs/schedule'
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -30,7 +31,7 @@ import { AuthModule } from './auth/auth.module';
     typeOrmConfig,
   TypeOrmModule.forFeature([Link, Visit]),
     AuthModule,
-
+  ScheduleModule.forRoot()
 
 
   ],

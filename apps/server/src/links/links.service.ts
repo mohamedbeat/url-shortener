@@ -3,12 +3,13 @@ import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Link } from './entities/link.entity';
-import { In, Repository } from 'typeorm';
+import { In, LessThan, MoreThan, Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 import { LinkSortFields, SortOrder, type Pagination } from "@packages/shared/types"
 import { S3Service } from '../common/s3.service';
 import { FindAllLinksFiltersDto } from './dto/find-all-filter.dto';
 import { CreateBulkLinksDto } from './dto/create-bulk-link.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class LinksService {
@@ -304,6 +305,31 @@ export class LinksService {
       totalLinks,
       totalClicks: totalClicks || 0
     }
+  }
+
+  // Cron job to delete expired links 
+  // @Cron(CronExpression.EVERY_10_SECONDS)
+  async deleteExpiredLinks() {
+    console.log('cron runing')
+    const tenDaysAgo = new Date();
+    // tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+    tenDaysAgo.setDate(tenDaysAgo.getSeconds() - 10);
+
+    const expiredLinks = await this.linkRepo.find({
+      where: {
+        expiresAt: LessThan(tenDaysAgo),
+
+      },
+    });
+
+    for (const link of expiredLinks) {
+      await this.linkRepo.delete({
+        id: link.id
+      });
+      console.log(`Deleted expired link: ${link.shortHash}`);
+    }
+
+    console.log(`Deleted ${expiredLinks.length} expired links`);
   }
 
 }

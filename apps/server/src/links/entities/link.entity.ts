@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -69,4 +70,25 @@ export class Link {
   })
   @Index()
   publicURL: string
+
+
+  @Column({ nullable: true })
+  @Index()
+  expiresAt: Date;
+
+  @Column({ default: false })
+  isExpired: boolean;
+
+
+
+
+  @BeforeInsert()
+  calculateExpiryDate() {
+    const expiryDate = new Date();
+    // expiryDate.setDate(expiryDate.getDate() + 10);
+    expiryDate.setDate(expiryDate.getSeconds() + 10);
+    this.expiresAt = expiryDate
+  }
+
+
 }

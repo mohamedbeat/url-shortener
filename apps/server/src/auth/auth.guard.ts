@@ -1,4 +1,3 @@
-
 import {
     CanActivate,
     ExecutionContext,
@@ -32,22 +31,35 @@ export class AuthGuard implements CanActivate {
         const request = context.switchToHttp().getRequest<Request>();
         const token = this.extractTokenFromCookie(request);
         if (!token) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException("no token provided");
         }
+        let payload
         try {
             // 💡 Here the JWT secret key that's used for verifying the payload 
             // is the key that was passsed in the JwtModule
-            const payload = await this.jwtService.verifyAsync(token);
+            payload = await this.jwtService.verifyAsync(token);
+            // console.log('auth guard payload', payload)
+
+
+        } catch (err) {
+            console.log(err)
+            throw new UnauthorizedException('invalid token');
+        }
+
+        try {
             // 💡 We're assigning the payload to the request object here
             // so that we can access it in our route handlers
 
             const user = await this.userService.getUserById(payload.id)
+            // console.log('user in auth guard', user)
 
             request['user'] = user;
 
+        } catch (err) {
+            console.log(err)
+            throw new UnauthorizedException('err fetching user');
 
-        } catch {
-            throw new UnauthorizedException();
+
         }
         return true;
     }
