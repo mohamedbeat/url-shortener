@@ -14,6 +14,7 @@ interface User {
 class AuthService {
     async getCurrentUser(): Promise<User | null> {
         try {
+            console.log('authenticating')
             const response = await axiosInstance.get<User>('api/auth/me')
             return response.data
         } catch (error) {

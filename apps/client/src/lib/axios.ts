@@ -56,7 +56,7 @@ axiosInstance.interceptors.response.use(
 
         // Don't attempt refresh for auth endpoints (except refresh endpoint)
         const isAuthEndpoint = originalRequest.url?.includes('/auth/') &&
-            !originalRequest.url?.includes('/auth/refresh');
+            !originalRequest.url?.includes('api/auth/refreshTokens');
         if (isAuthEndpoint) {
             // Clear auth and redirect to login
             handleAuthFailure();
@@ -81,7 +81,7 @@ axiosInstance.interceptors.response.use(
 
         try {
             // Attempt to refresh token
-            await axiosInstance.post('/auth/refresh');
+            await axiosInstance.post('api/auth/refreshTokens');
 
             // Process queued requests
             processQueue(null);

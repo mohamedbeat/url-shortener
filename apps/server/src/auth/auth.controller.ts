@@ -60,7 +60,22 @@ export class AuthController {
   async refreshTokens(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const accessToken = req.cookies['accessToken']
     const refreshToken = req.cookies['refreshToken']
-    return await this.authService.refreshTokens(refreshToken, accessToken)
+    console.log(accessToken)
+    console.log(refreshToken)
+    const tokens = await this.authService.refreshTokens(refreshToken, accessToken)
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      secure: this.envService.isProduction(),
+      sameSite: 'lax',
+      maxAge: 3600000 * 24, // 1 hour
+    })
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: this.envService.isProduction(),
+      sameSite: 'lax',
+      maxAge: 3600000 * 24, // 1 hour
+    })
+    return tokens
   }
 
 

@@ -16,6 +16,7 @@ const RootDocument = () => {
   useEffect(() => {
     if (isLoading) return
 
+    console.log(isAuthenticated ? 'athenticated' : 'not authenticated')
     const normalizePathname = (path: string) => {
       if (!path) return '/'
       if (path !== '/' && path.endsWith('/')) return path.slice(0, -1)
