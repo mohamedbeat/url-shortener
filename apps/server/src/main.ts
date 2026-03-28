@@ -8,6 +8,7 @@ import { DetailedLoggingInterceptor } from './common/interceptor/req.interceptor
 // import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
+  console.log("frontend url:", process.env.FRONTEND_URL)
   const app = await NestFactory.create(AppModule, {
     cors: {
       origin: true,
