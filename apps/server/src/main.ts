@@ -14,6 +14,12 @@ async function bootstrap() {
       credentials: true,
     },
   });
+  app.enableCors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000', // fallback URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true, // if you need to send cookies/auth headers
+    // allowedHeaders: ['Content-Type', 'Authorization'],
+  })
   app.use(cookieParser())
   const envService = app.get(EnvService)
   const logger = new ConsoleLogger({
