@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@/components/theme-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { createRootRouteWithContext, Outlet, useLocation, useNavigate } from '@tanstack/react-router'
-import appCss from "../index.css?url"
+import { createRootRouteWithContext, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
+import appCss from "../index.css?url";
 import { Toaster } from '@/components/ui/sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';

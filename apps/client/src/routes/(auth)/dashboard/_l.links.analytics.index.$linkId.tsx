@@ -4,10 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, MousePointer, Globe, Link as LinkIcon, Smartphone, Calendar, TrendingUp } from 'lucide-react';
+import { AlertCircle, MousePointer, Smartphone, Calendar, TrendingUp } from 'lucide-react';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   PieChart,
@@ -20,7 +18,7 @@ import {
   Legend,
   ResponsiveContainer,
   AreaChart,
-  Area,
+  Area
 } from 'recharts';
 import { fetchLinkAnalytics, type AnalyticsData } from '@/lib/api/links';
 import { WorldMap } from '@/components/dashboard/links/world-map';
@@ -243,7 +241,7 @@ function AnalyticsPage() {
                       cx="50%"
                       cy="50%"
                       outerRadius={150}
-                      label={(entry) => `${entry.source}: ${entry.count}`}
+                      label={(entry) => `${entry.name}: ${entry.value}`}
                     >
                       {analytics.trafficSources.topReferrers.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

@@ -85,7 +85,7 @@ export const getAllLinks = async (params?: {
 export const deleteLink = async (id: string) => {
 
     // await new Promise(resolve => setTimeout(resolve, 5000));
-    const res = await axiosInstance.delete(`/api/links/${id}`, {
+    await axiosInstance.delete(`/api/links/${id}`, {
     });
 
     return true;

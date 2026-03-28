@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
-import { Download, Copy, QrCode as QrCodeIcon } from 'lucide-react';
+import { Download, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 

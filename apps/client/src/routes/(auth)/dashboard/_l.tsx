@@ -1,7 +1,7 @@
 import { Header } from '@/components/dashboard/sidebar/header';
 import { AppSidebar } from '@/components/dashboard/sidebar/sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/(auth)/dashboard/_l')({
   component: DashboardLayout,

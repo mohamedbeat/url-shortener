@@ -3,11 +3,9 @@ import {
     ArrowDownRight,
     Link2,
     MousePointerClick,
-    QrCode, TrendingUp,
-    Icon,
-    AlertCircleIcon
-} from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+    QrCode, AlertCircleIcon
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { getStats } from '@/lib/api/stats';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -57,7 +55,7 @@ function StatsGridSkeleton() {
 }
 
 export function QuickStatsGrid() {
-    const { isPending, isError, data, error, refetch } = useQuery({
+    const { isPending, isError, data, refetch } = useQuery({
         queryKey: ['stats'],
         queryFn: getStats
     })

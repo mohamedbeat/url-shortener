@@ -5,12 +5,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Link2, Loader2, Plus } from 'lucide-react';
+import { Link2, Loader2 } from 'lucide-react';
 import { createLink, type CreateLinkInput, createLinkSchema } from '@/lib/api/links';
 import { parseValidationErrors } from '@/lib/form-validation-parser';
 import { handleApiError } from '@/lib/axios';
-import { useNavigate } from '@tanstack/react-router';
 import { Separator } from '../ui/separator';
 
 interface CreateLinkDialogProps {
@@ -22,9 +20,6 @@ export function CreateLinkDialog({ onSuccess, children }: CreateLinkDialogProps)
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
     const [serverErrors, setServerErrors] = useState<string[]>([])
-
-    const navigate = useNavigate()
-
 
     const createLinkMutation = useMutation({
         mutationFn: createLink,
@@ -71,9 +66,9 @@ export function CreateLinkDialog({ onSuccess, children }: CreateLinkDialogProps)
     };
 
 
-    let trigger: React.ReactNode
+    let trigger: React.ReactElement
     if (children) {
-        trigger = children
+        trigger = children as React.ReactElement
     } else {
         trigger = (
             <Button size="lg" >

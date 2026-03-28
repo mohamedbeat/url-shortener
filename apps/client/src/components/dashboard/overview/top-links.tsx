@@ -7,7 +7,6 @@ import { getAllLinks } from '@/lib/api/links'
 import { getStats } from '@/lib/api/stats'
 import { handleApiError } from '@/lib/axios'
 import { useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
 import { AlertCircleIcon } from 'lucide-react'
 
 

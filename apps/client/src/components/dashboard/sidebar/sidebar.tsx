@@ -17,13 +17,10 @@ import {
 } from '@/components/ui/sidebar';
 import { Link } from '@tanstack/react-router';
 import {
-  BarChart3,
   ChevronDown,
   CreditCard,
   FolderGit2,
-  Globe,
-  HelpCircle,
-  LayoutDashboard,
+  Globe, LayoutDashboard,
   Link2,
   QrCode,
   Settings,
@@ -33,7 +30,7 @@ import {
 } from 'lucide-react';
 import { SideBarFooter } from './SideBareFooter';
 import { SideBarThemeToggler } from './SideBarThemeToggler';
-import { useLocation } from '@tanstack/react-router'
+import { useLocation } from '@tanstack/react-router';
 
 const mainNavigation = [
   {

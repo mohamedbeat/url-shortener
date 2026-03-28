@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Link } from '@tanstack/react-router'
 import {
     Calendar, QrCode, Zap
 } from 'lucide-react'

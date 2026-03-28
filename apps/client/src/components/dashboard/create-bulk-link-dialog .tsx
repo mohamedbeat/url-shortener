@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Link2, Loader2, Plus, Trash2, X } from 'lucide-react';
+import { Link2, Loader2, Plus, Trash2 } from 'lucide-react';
 import { createBulkLink, createBulkLinkSchema } from '@/lib/api/links';
 import { handleApiError } from '@/lib/axios';
 import { useNavigate } from '@tanstack/react-router';
@@ -29,7 +29,7 @@ export function CreateBulkLinkDialog({ onSuccess, children }: CreateBulkLinkDial
 
     const createBulkLinkMutation = useMutation({
         mutationFn: createBulkLink,
-        onSuccess: (data) => {
+        onSuccess: (_) => {
             queryClient.invalidateQueries({ queryKey: ['links',], exact: false });
             setOpen(false);
             onSuccess?.();
@@ -87,9 +87,9 @@ export function CreateBulkLinkDialog({ onSuccess, children }: CreateBulkLinkDial
         }
     };
 
-    let trigger: React.ReactNode;
+    let trigger: React.ReactElement;
     if (children) {
-        trigger = children;
+        trigger = children as React.ReactElement;
     } else {
         trigger = (
             <Button size="lg">

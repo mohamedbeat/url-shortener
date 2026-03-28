@@ -1,4 +1,3 @@
-// app/routes/dashboard/index.tsx
 import { CreateLinkDialog } from '@/components/dashboard/create-link-dialog'
 import { QuickActions } from '@/components/dashboard/overview/quick-actions'
 import { QuickAnalytics } from '@/components/dashboard/overview/quick-analytics'
@@ -49,7 +48,7 @@ function DashboardPage() {
     queryKey: ["links"],
     queryFn: () => getAllLinks({})
   })
-  const [hasLinks, setHasLinks] = useState(true)
+  const [hasLinks, _] = useState(true)
 
   useEffect(() => {
     // if (data?.data?.length && data.data.length > 0) {

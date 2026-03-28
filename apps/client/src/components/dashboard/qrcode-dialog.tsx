@@ -4,11 +4,9 @@ import {
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+    DialogTitle
 } from '../ui/dialog';
 import { Button } from '../ui/button';
-import { QrCode } from 'lucide-react';
 import { useState } from 'react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -37,12 +35,6 @@ export function QRCodeDialog({ url, shortCode, open, onOpenChange, showSizeContr
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            {/* <DialogTrigger >
-                <Button variant="outline" size="sm" className="gap-2">
-                    <QrCode className="h-4 w-4" />
-                    QR Code
-                </Button>
-            </DialogTrigger> */}
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>QR Code</DialogTitle>

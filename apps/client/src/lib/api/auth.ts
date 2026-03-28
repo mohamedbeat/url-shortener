@@ -1,5 +1,3 @@
-// src/features/auth/services/auth-service.ts
-
 import axiosInstance from "../axios"
 
 interface User {

@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Home, ArrowLeft, Link2 } from 'lucide-react';
+import { AlertCircle, Home, ArrowLeft } from 'lucide-react';
 
 
 export const Route = createFileRoute('/(noauth)/notfound/')({
