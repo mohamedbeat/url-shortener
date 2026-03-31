@@ -54,11 +54,8 @@ axiosInstance.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        // Don't attempt refresh for auth endpoints (except refresh endpoint)
-        const isAuthEndpoint = originalRequest.url?.includes('/auth/') &&
-            !originalRequest.url?.includes('api/auth/refreshTokens');
-        if (isAuthEndpoint) {
-            // Clear auth and redirect to login
+        // Skip refresh for the refresh token endpoint itself
+        if (originalRequest.url?.includes('api/auth/refreshTokens')) {
             handleAuthFailure();
             return Promise.reject(error);
         }

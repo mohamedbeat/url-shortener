@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/useAuth'
 export function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { logout, user } = useAuth()
+  console.log(user)
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
@@ -67,7 +68,7 @@ export function Header() {
               >
                 <Avatar className="h-8 w-8 cursor-pointer">
                   <AvatarImage src={user?.picture} alt="User" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarFallback>{user?.firstName[0]}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
             </Button>
