@@ -9,14 +9,24 @@ import { EnvService } from "../config/env/env.service";
 @Injectable()
 export class S3Service {
 
-  private s3 = new S3Client({
-    region: "us-east-1",
-    endpoint: "http://localhost:4566",
-    forcePathStyle: true,
+  // private s3 = new S3Client({
+  //   region: "us-east-1",
+  //   endpoint: "http://localhost:4566",
+  //   forcePathStyle: true,
+  //   credentials: {
+  //     accessKeyId: "test",
+  //     secretAccessKey: "test",
+  //   },
+  // });
+
+  private s3: S3Client = new S3Client({
+    endpoint: process.env.AWS_ENDPOINT,       // http://localhost:9000
+    region: process.env.AWS_REGION,
     credentials: {
-      accessKeyId: "test",
-      secretAccessKey: "test",
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
     },
+    forcePathStyle: true,  // required for self-hosted S3-compatible stores
   });
 
 
