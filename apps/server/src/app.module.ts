@@ -6,7 +6,7 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { ConfigModule } from '@nestjs/config'
 import {
   envConfig,
-  envValidatinSchema
+  envValidationSchema
 } from './config/env/env.config';
 import { EnvModule } from './config/env/env.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,7 +20,7 @@ import { ScheduleModule } from '@nestjs/schedule'
   imports: [ConfigModule.forRoot({
     isGlobal: true,
     load: [envConfig],
-    validationSchema: envValidatinSchema,
+    validationSchema: envValidationSchema,
     validationOptions: {
       // Return all validation errors, not just the first one
       abortEarly: true,

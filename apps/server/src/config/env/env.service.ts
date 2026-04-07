@@ -8,6 +8,10 @@ export class EnvService {
   get database() {
     return {
       database: this.configService.getOrThrow<string>('database.database'),
+      host: this.configService.getOrThrow<string>('database.host'),
+      port: this.configService.getOrThrow<number>('database.port'),
+      user: this.configService.getOrThrow<string>('database.user'),
+      pass: this.configService.getOrThrow<string>('database.pass'),
     };
   }
 
@@ -16,6 +20,7 @@ export class EnvService {
       port: this.configService.getOrThrow<number>('app.port'),
       name: this.configService.getOrThrow<string>('app.name'),
       environment: this.configService.getOrThrow<string>('app.environment'),
+      frontEndUrl: this.configService.getOrThrow<string>('app.frontEndUrl'),
     };
   }
 

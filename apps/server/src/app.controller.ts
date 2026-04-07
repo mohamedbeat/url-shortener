@@ -25,7 +25,6 @@ export class AppController {
 
     const info = await this.authService.getDeviceInfo(req)
 
-    console.log("Device Info:", info)
 
     if (!info) {
       throw new InternalServerErrorException("Something went wrong while tracking the visit.")
@@ -36,9 +35,10 @@ export class AppController {
     }
 
     const link = await this.appService.getLink(hash);
+    console.log("link", link)
     if (!link || !link.isActive || link.isExpired) {
       // throw new NotFoundException(`Link not found.`)
-      const frontEndUrl = `http://localhost:3001/notfound`
+      const frontEndUrl = this.envService.app.frontEndUrl + `/notfound`
       return res.redirect(HttpStatus.TEMPORARY_REDIRECT, frontEndUrl)
 
     }

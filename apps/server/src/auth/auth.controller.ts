@@ -3,9 +3,9 @@ import { AuthService } from './auth.service';
 import { AuthGuard as PassPortAuthGuard } from '@nestjs/passport';
 import type { Response, Request } from 'express';
 import { User } from './entities/user.entity';
-import { EnvService } from 'src/config/env/env.service';
+import { EnvService } from '../config/env/env.service';
 import { User as UserDecorator } from '../common/decorators/user-decorator'
-import { Public } from 'src/common/decorators/public.decorator';
+import { Public } from '../common/decorators/public.decorator';
 
 @Controller('api/auth')
 export class AuthController {

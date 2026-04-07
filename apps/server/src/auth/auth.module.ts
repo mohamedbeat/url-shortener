@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { EnvService } from 'src/config/env/env.service';
+import { EnvService } from '../config/env/env.service';
 import { GoogleStrategy } from './google.strategy';
 import { Session } from './entities/session.entity';
 import { UserService } from './user.service';
@@ -37,4 +37,5 @@ import { APP_GUARD } from '@nestjs/core';
   ],
   exports: [AuthService, UserService, SessionService, AuthGuard]
 })
-export class AuthModule { }
+export class AuthModule {
+}

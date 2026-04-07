@@ -15,7 +15,7 @@ import { PaginationDto } from '../common/dtos/paginationQuery.dto';
 import { FindAllLinksFiltersDto } from './dto/find-all-filter.dto';
 import { SortLinksDto } from './dto/sort-links-query.dto';
 import { IdsDto } from './dto/delete-by-ids.dto';
-import { User } from 'src/common/decorators/user-decorator';
+import { User } from '../common/decorators/user-decorator';
 import { CreateBulkLinksDto } from './dto/create-bulk-link.dto';
 import { AnalyticsService } from './analytics.service';
 @Controller('api/links')

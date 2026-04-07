@@ -307,7 +307,7 @@ export class LinksService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_4_HOURS)
   async markExpiredLinks() {
     console.log('EXPIRY CRON JOB')
     const now = new Date();
@@ -328,7 +328,7 @@ export class LinksService {
   }
 
   // Cron job to delete expired links 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_4_HOURS)
   async deleteExpiredLinks() {
     console.log('DELETE CRON JOB RUNNING');
 

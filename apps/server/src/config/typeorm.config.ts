@@ -1,14 +1,15 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Link } from '../links/entities/link.entity';
-import { EnvModule } from './env/env.module';
 import { EnvService } from './env/env.service';
-import { Visit } from 'src/links/entities/visits.entity';
 
 export const typeOrmConfig = TypeOrmModule.forRootAsync({
   imports: [],
   inject: [EnvService],
   useFactory: async (envService: EnvService) => ({
-    type: 'sqlite',
+    type: 'postgres',
+    host: envService.database.host,
+    port: envService.database.port,
+    username: envService.database.user,
+    password: envService.database.pass,
     database: envService.database.database,
     // NOTE: this should look for entities from 
     entities: ["dist/**/*.entity.js"],
