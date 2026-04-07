@@ -34,7 +34,7 @@ const EmptyState = () => (
     </CardHeader>
     <CardContent className="flex justify-center pb-8">
       <CreateLinkDialog>
-        <Button size="lg">
+        <Button size="lg" className="cursor-pointer">
           <Link2 className="mr-2 h-5 w-5" />
           Create your first short link
         </Button>
